@@ -263,7 +263,7 @@ $(document).ready(function () {
 	// HEADER/FOOTER 정보 셋팅 
 	$('header .ci span').text("");
 	
-	var version = "Ver."+db.masterInfo.KIOSK_VERSION+" Kiosk."+db.masterInfo.KIOSK_ID+" Store."+ db.masterInfo.STORE_CODE+" Pos."+ db.masterInfo.POS_ID;
+	var version = "Ver."+db.masterInfo.TEST_VERSION+" TEST."+db.masterInfo.TEST_ID+" Store."+ db.masterInfo.STORE_CODE+" Pos."+ db.masterInfo.POS_ID;
 	$('.test_footer .ver').text(version);
 	
 	var $today_time = $('header .today_time');
@@ -290,7 +290,7 @@ $(document).ready(function () {
 	var str = '';
 	str += '<div id="admin_pw" class="admin_pw_wrap" style="display:none">';
 	str += '	<div class="admin_pw fade_up">';
-	str += '		<p class="admin_title">test KIOSK</p>';
+	str += '		<p class="admin_title">test TEST</p>';
 	str += '		<div class="click_num  ">';
 	str += '			<input type="password" id="admin_pw_num" class="admin_pw_num" placeholder="관리자 비밀번호 입력" disabled="disabled">';
 	str += '			<div class="num_wrap">';
@@ -322,7 +322,7 @@ $(document).ready(function () {
 	});
 	$('#buttonAdminPwConfirm').click(function () {
 		$('#admin_pw').hide();
-		if (db.masterInfo.KIOSK_ADMIN_PWD ==$('#admin_pw_num').val()) {
+		if (db.masterInfo.TEST_ADMIN_PWD ==$('#admin_pw_num').val()) {
 			biz.gotoAdminUI();
 		} else {
 			popupView.alert2('에러',"비밀번호를 확인해주세요.", '');
