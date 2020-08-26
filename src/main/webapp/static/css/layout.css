@@ -1,0 +1,130 @@
+@charset "utf-8";
+
+/*------------------------------------------------------------------------------------------------------------------------------------------
+	File : layout.css
+ 	CSS 적용순서 : 아이디 > 태그와 클래스 > 클래스 > 태그
+	CSS 선택자 선언순서 : Type Selector, Layout Selector, Class Selector, Etc
+	CSS 속성 선언순서 : display, position, float/clear, overflow, width/height, margin/padding, border, background, color/font, align, etc
+--------------------------------------------------------------------------------------------------------------------------------------------*/
+.canvasWrap {display:block; position:relative; width:100%; height:100%; margin:0; padding:0;}
+
+.headSection {display:table; position:fixed; width:100%; height:100px; padding:0; left:0; top:0; background-color:#fff; z-index:3;}
+.headSection .flaxArticle {display:block; position:absolute; width:260px; height:100px; border-top:solid #ff6000 3px; background-color:#413f3f; left:0; top:0px; border-bottom:solid #504e4e 1px;}
+.flaxArticle .logo {display:block; position:relative; min-height:80px; margin:20px 0 0 20px;  cursor:pointer;}
+.flaxArticle .logo h1 {display:block; position:relative; margin:0; padding:0;}
+.flaxArticle .logo h1 a {display:block; padding:0 0 0 50px; background:url(/static/img/common/testLogo.png) no-repeat 0 0; font-size:23px; color:#a3a3a3; font-family:"NotoSans-Bold";}
+.flaxArticle .logo h1 a span {display:block; position:relative; margin:0 0 4px 0; padding:0; font-size:17px;}
+.flaxArticle .logo p {display:inline-block; position:relative; margin:4px 0 0 50px; padding:0; color:#fff; font-size:9px; -webkit-font-size:7px;}
+
+.headSection .branchArticle {float:right; display:inline-block; position:relative; margin:0; padding:0 40px 0 0;  font-family: "Dotum";}
+.branchArticle .affiliation {display:block; position:relative; margin:20px 0 10px; padding:0; font-size:14px; color:#555; text-align:right; letter-spacing:1px;}
+.branchArticle .affiliation .current {font-size:16px;}
+.branchArticle .branchSearch {display:table; position:relative; margin:0; padding:0;}
+.branchSearch select {
+	float:left; min-width:200px; min-width:200px\9; height:34px; padding:5px 55px 3px 10px; padding:5px 5px 4px 10px\9;
+	border:solid #d5d5d5 1px; font-size:14px; color:#787878; appearance:none; -webkit-appearance:none; -moz-appearance:none; -o-appearance:none;
+	background:url('/static/img/common/branchSelect_btn.png') right center no-repeat; background:none\9; background-color:#fff;
+	border-radius:4px; box-sizing:border-box; outline:none;
+}
+.branchSearch input {float:left; display:inline-block; position:relative; width:200px; height:34px; margin:0; padding:5px 10px; border:solid #d5d5d5 1px; border-radius:3px; font-size:14px; color:#787878; outline:none; overflow:hidden;}
+.branchSearch .searchBtn {display:inline-block; position:absolute; top:0; right:0px; width:34px; height:34px; padding:0; text-indent:-9999px; background:url(/static/img/common/branchSearch_btn.png) no-repeat left top; outline:none; border-radius: 0 3px 3px 0;}
+.branchSearch .selectBtn {float:left; display:inline-block; position:relative; width:34px; height:34px; margin:0; padding:0; text-indent:-9999px; background:url(/static/img/common/branchSelect_btn.png) no-repeat left top;}
+.branchSearch input.selectable {width:234px; padding-right:40px; border-radius:3px; background:url(/static/img/common/branchSelect_btn.png) no-repeat right top; outline:none;}
+.branchSearch input.selectable:focus { background:url(/static/img/common/branchSelect_btnOn.png) no-repeat right top;}
+.branchSearch .office:first-child input.selectable {background:none;}
+.branchSearch .office {float:left; display:table; position:relative; margin:0 5px 0 0; padding:0;}
+.branchSearch .office .selectWrap {display:none; position:absolute; min-width:300px; max-height:351px; padding:0; left:-10px; top:40px; border:solid #d5d5d5 1px; background-color:#fff;  border-radius:5px; z-index:10; box-shadow:2px 2px 3px #ccc;}
+.branchSearch .office .selectWrap.on {display:inline-block;}
+.branchSearch .office .ulSelect {display:block; position:relative; width:100%; margin:0; padding:0;}
+.branchSearch .ulSelect li {display:block; position:relative; margin:0; padding:0;}
+.branchSearch .ulSelect li:last-child {border-bottom:none;}
+.branchSearch .ulSelect li a {display:block; position:relative; width:100%; overflow:hidden; margin:0; padding:10px; font-size:14px; border-bottom:solid #ddd 1px; text-overflow:ellipsis; white-space:nowrap;}
+.branchSearch .ulSelect li a:hover {background-color:#ffd6b2; color:#333;}
+.branchSearch .myReport {float:left;display:inline-block; position:relative; height:34px; margin:0 5px 0 0; padding:0 9px 0 37px; font-size:14px; color:#fff; line-height:30px; background:#ff0000 url(/static/img/common/icoMyReport.png) no-repeat 8px 50%; border-radius:4px;}
+.branchSearch .myReport:before {display:inline-block; clear:both; font-size:14px; color:#fff;}
+.branchSearch .logout {float:left;display:inline-block; position:relative; height:34px; margin:0; padding:0 10px 0 33px; color:#fff; font-size:14px; background:url(/static/img/common/logout.png) no-repeat 10px 50% #413f3f; border-radius:4px;}
+.headSection .headline {display:block; position:absolute; width:100%; padding:0 40px 0 294px; box-sizing:border-box; left:0; bottom:-0px;}
+.headSection .headline span {display:block; position:relative; width:100%; height:1px; background-color:#d5d5d5; }
+.adhesion .headSection .headline {padding-left:114px;}
+.adhesion .headSection  .flaxArticle .logo{display:block;  background:url(/static/img/common/testLogo.png) no-repeat 0 0; width:40px; height:40px; }
+
+
+
+.contentsWrap {display:block; position:relative; width:100%; margin:0; padding:100px 0 0 260px; box-sizing:border-box; overflow:hidden;}
+.contentsWrap .lnbSection {display:block; position:fixed; width:260px; height:100%; margin:0; padding:100px 0 0 0; background-color:#413f3f; left:0; top:0px; z-index:2;}
+.lnbSection .lnbWrap {display:block; position:relative; height:100%; width:100%; left:0;}
+
+.lnbWrap ul {display:block; position:relative; margin:0; padding:0;}
+.lnbWrap .depth01 {display:block; position:relative; margin:0; padding:0; border-bottom:solid #504e4e 1px; transition: all 1s;}
+.lnbWrap .depth01::after {content:''; display:block; position:absolute; width:11px; height:11px; right:15px; top:14px;background:url(/static/img/common/lnb_ico_btn.png) no-repeat 0 0;}
+.lnbWrap .depth01:hover::after {background-position:0 -50px;}
+.lnbWrap .depth01 .lnbToggle {display:block; position:relative; width:100%; height:40px; margin:0; padding:0 30px 0 40px; background-image:url(/static/img/common/lnb_ico_open.png); background-repeat:no-repeat; color:#a09f9f; font-size:16px; text-align:left; /* transition: width 0.5s, height 0.5s; */}
+.lnbWrap .depth01 .lnbToggle:hover,
+.lnbWrap ul li.depth01.on .lnbToggle {background-image:url(/static/img/common/lnb_ico_open_hover.png); color:#fff;}
+.lnbWrap .depth01.on::after {background-position:0 -150px;}
+.lnbToggle.mn01 {background-position:18px 12px;}
+.lnbToggle.mn02 {background-position:18px -68px;}
+.lnbToggle.mn03 {background-position:18px -148px;}
+.lnbToggle.mn04 {background-position:18px -228px;}
+.lnbToggle.mn05 {background-position:18px -309px;}
+.lnbToggle.mn06 {background-position:18px -388px;}
+.lnbToggle.mn07 {background-position:18px -469px;}
+.lnbToggle.mn08 {background-position:18px -548px;}
+.lnbToggle.mn09 {background-position:18px -627px;}
+.lnbToggle.mn10 {background-position:18px -722px;}
+.lnbWrap .depth02 {display:none; position:relative; margin:0; padding:0; border-top:none; background-color:#545353;}
+.lnbWrap .depth01.on > .depth02 {display:block;}
+.lnbWrap .depth01.active > .depth02 {display:block;}
+.lnbWrap .depth02 li {display:block; position:relative; height:30px; margin:0; padding:0 30px 0 40px;}
+.lnbWrap .depth02 li.current {background-color:#02b6b4;}
+.lnbWrap .depth02 li a {display:block; position:relative; margin:0; padding:0 0 0 10px; line-height:30px; font-size:14px; color:#a09f9f;}
+.lnbWrap .depth02 li a::after {content:''; display:block; position:absolute; width:4px; height:1px; background-color:#a09f9f; left:0; top:15px;}
+.lnbWrap .depth02 li a:hover, .lnbWrap .depth02 li.current a {color:#fff;}
+.lnbWrap .depth02 li a:hover::after, .lnbWrap .depth02 li.current a::after {background-color:#fff;}
+
+.lnbSection .menuToggle {display:block; position:absolute; width:22px; height:60px; margin-top:-30px; right:-22px; top:50%; text-indent:-9999px; border-radius:0 3px 3px 0; background:url(/static/img/common/lnb_ico_tab.png) no-repeat -45px 50% #413f3f;}
+
+.adhesion .flaxArticle {width:80px;}
+.adhesion .flaxArticle .logo h1, .adhesion .flaxArticle .logo p{display:none;}
+.adhesion .contentsWrap {padding-left:80px;}
+
+.adhesion .lnbSection {width:80px;}
+.adhesion .lnbWrap .depth01::after {display:none;}
+.adhesion .lnbWrap .depth01 .lnbToggle{height:80px; padding:23px 0 0 0; background-image:url(/static/img/common/lnb_ico_close.png); text-align:center; font-size:12px; /* transition: width 0.5s, height 0.5s; */}
+.adhesion .lnbWrap .depth01 .lnbToggle:hover {background-image:url(/static/img/common/lnb_ico_close_hover.png);}
+.adhesion .lnbWrap .depth01 .lnbToggle:hover, 
+.adhesion .lnbWrap ul li.depth01.on .lnbToggle {background-image:url(/static/img/common/lnb_ico_close_hover.png);}
+.adhesion .lnbToggle.mn01 {background-position:30px 20px;}
+.adhesion .lnbToggle.mn02 {background-position:-52px 18px;}
+.adhesion .lnbToggle.mn03 {background-position:-134px 20px;}
+.adhesion .lnbToggle.mn04 {background-position:-214px 17px;}
+.adhesion .lnbToggle.mn05 {background-position:-292px 16px;}
+.adhesion .lnbToggle.mn06 {background-position:-374px 20px;}
+.adhesion .lnbToggle.mn07 {background-position:-449px 16px;}
+.adhesion .lnbToggle.mn08 {background-position:-534px 18px;}
+.adhesion .lnbToggle.mn09 {background-position:-611px 20px;}
+.adhesion .lnbToggle.mn10 {background-position:-698px 20px;}
+.lnbSection .mCSB_inside > .mCSB_container {margin-right:10px;}
+.lnbSection .lnbWrap .mCSB_scrollTools {right:-3px; opacity:0.5;}
+.adhesion .lnbSection .menuToggle {background-position:5px 50%;}
+.adhesion .lnbWrap .depth02 {display:none !important;}
+.adhesion .lnbSection .mCSB_scrollTools {visibility:hidden !important;}
+.adhesion .lnbSection .mCSB_inside > .mCSB_container {margin-right:0 !important;}
+
+.contentsWrap .contentsSection {display:block; position:relative; min-width:1000px; height:100%; padding:0 40px 0 34px; overflow:auto;}
+.contentsSection .contentsTitle {display:inline-block; position:fixed; left:294px; top:24px; z-index:4;}
+.contentsSection .contentsTitle h1 {display:block; position:relative; margin:0 0 10px 0; padding:0; font-size:24px; color:#5c5c5c; font-family:"NotoSans-Bold";}
+.contentsSection .contentsTitle .pageNav {display:block; position:relative; margin:0; padding:0; font-size:14px; color:#787878; font-family:"Dotum";}
+.contentsSection .contents {display:block; position:relative; width:100%; margin:0; padding:20px 0 50px 0;}
+.adhesion .contentsSection .contentsTitle {left:114px;}
+.contentsSection > .mCSB_scrollTools {right:-16px !important;}
+.btnTop{position:absolute; bottom:20px; right:20px; display:block: background:#d5d5d5; color:#777; width:60px; height:60px;}
+
+@media screen and (max-width:1500px) {
+	.branchSearch .logout {padding:0 0 0 33px; font-size:0; text-indent:-9999px;}
+	.contentsSection .contentsTitle h1 {display:inline-block; font-size:20px;}
+	.contentsSection .contentsTitle .pageNav {display:inline-block; font-size:12px;}
+}
+@media screen and (max-width:1280px) {
+	.canvasWrap, .headSection, .contentsWrap {width:1280px;}
+}

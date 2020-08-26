@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd" >
+<properties>
+
+<!-- 
+사용방법
+java:@Value("#{config['UPLOAD_GROUP_SAMPLE']}") String BOARD_GBN;
+jsp:<spring:eval expression="@config['UPLOAD_GROUP_SAMPLE']" var="UPLOAD_GROUP_SAMPLE" />
+xml:#{config['UPLOAD_GROUP_SAMPLE']}
+ -->
+
+	<comment>프로퍼티</comment>
+
+<!--  개발기 정보 -->
+	<entry key="FILE_STORE_PATH">/neo/files/upload</entry>	<!--  서버에 업로드될 경로 -->
+	<entry key="FILE_EDITOR_PATH">/neo/files/dir</entry>	<!--  웹에디터로 업로드될 경로 -->
+	<entry key="SERVER_URL">http://localhost:8080</entry>
+	<entry key="SERVER_URL_DEV">http://localhost:8080</entry>
+	<entry key="SERVER_URL_LOCAL">http://localhost:8080</entry>
+<!--  개발기 정보 -->
+
+	<!-- 페이징 -->
+	<entry key="PAGENUM">1</entry>
+	<entry key="PAGESIZE_10">10</entry>
+	<entry key="PAGESIZE_20">20</entry>
+	<entry key="BLOCKSIZE_10">10</entry>	
+	<entry key="BLOCKSIZE_20">20</entry>	
+	
+	<!--  상태코드 -->
+	<entry key="STATUS_S_CODE">0000</entry>	<!-- 성공 -->
+	<entry key="STATUS_F_CODE">9999</entry>	<!-- 실패 -->
+	
+	<!-- 파일 -->
+	<entry key="EDITOR_UPLOAD_ABLE_FILE">png,gif,jpeg,jpg</entry>
+	<entry key="UPLOAD_VIEWPATH">/dir</entry><!-- 파일접근 URL 경로  결과로는 도매인 + 이것 -->
+
+	<entry key="EDITOR_IMGSTORE_PATH">/editor/img</entry><!-- 에디터 이미지 경로 -->
+	<entry key="EDITOR_FILE_PREFIX">editor_</entry><!-- 에디터 이미지 파일 접두어-->
+
+	<entry key="EXCEL_UPLOAD_PATH">/excel</entry><!-- 샘플 파일 업로드 경로 -->
+	<entry key="SAMPLE_UPLOAD_PATH">/sample</entry><!-- 샘플 파일 업로드 경로 -->
+	<entry key="SAMPLE_FILE_PREFIX">sample_</entry><!-- 샘플 파일 업로드 파일 접두어 -->
+	
+	
+	<!-- S:파일 업로드 그룹 -->
+	<!-- 샘플 -->
+	<entry key="MASTER_TABLE_SAMPLE">TB_SAMPLE</entry>
+	<entry key="UPLOAD_GROUP_SAMPLE">SAMPLE</entry>
+	<entry key="UPLOAD_GROUP_SUB_SAMPLE1">SAMPLE1</entry>
+	<entry key="UPLOAD_GROUP_SUB_SAMPLE2">SAMPLE2</entry>
+	<entry key="UPLOAD_GROUP_SAMPLE_EXCEL">SAMPLE_EXCEL</entry>
+	<entry key="UPLOAD_GROUP_SUB_SAMPLE_EXCEL">SAMPLE_EXCEL1</entry>
+	<!-- E:파일 업로드 그룹 -->
+	
+</properties>

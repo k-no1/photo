@@ -1,0 +1,82 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*logout timer*/
+.time_logout_wrap{
+  position: fixed;
+  width: 1080px;
+  height: 1920px;
+  left:0;
+  top:0;
+  background: rgba(0,0,0,0.9);
+  z-index:999999;
+  text-align: center;
+}
+.time_logout{
+  margin-top:500px;
+}
+
+.timer_text{
+  font-size: 36px; 
+  margin-top:70px;
+  font-weight: bold;
+}
+.timer_btn_wrap{
+  margin-top:90px;
+}
+.timer_btn_wrap a{width:300px; margin:0 10px;}
+
+.radialtimer {
+  width:344px;
+  height:344px;
+  line-height: 334px;
+  border-radius: 100%;
+  margin:auto;
+  font-size: 100px;
+  font-weight: bold;
+  background:rgba(250,250,250,0);
+ 
+}
+.radialtimer .n {
+  position: absolute;  
+ width:344px;
+  height:344px; 
+  border-radius: 100%;
+  text-align: center;
+  line-height: 344px;
+  font-size: 100px;
+  color: #fff;
+  background:rgba(250,250,250,0);
+  border: 5px solid #fff;
+}
+.radialtimer .slice {
+  position: absolute;
+  width:344px;
+  height:344px;
+  clip: rect(0px, 344px, 344px, 172px);
+  background:rgba(250,250,250,0);
+}
+.radialtimer .slice.nc {
+  clip: rect(auto, auto, auto, auto);
+}
+.radialtimer .slice .q {
+  position: absolute;
+  width:344px;
+  height:344px;
+  border: 5px white solid;
+  border-radius: 100%;
+  clip: rect(0px,172px, 172px, 0px);
+  z-index: 2;
+}
+.radialtimer .slice .pie {
+  border: 5px #22afc0 solid;
+  position: absolute;
+  width:344px;
+  height:344px;
+  clip: rect(0px, 172px, 344px, 0px);
+  border-radius: 100%;
+  transition: all 1s linear;
+  z-index: 1;
+}
+.timer_text{color:#fff;}
+.timer{display: inline-block; margin-right:5px; width:40px; }

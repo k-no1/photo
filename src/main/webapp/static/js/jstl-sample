@@ -1,0 +1,62 @@
+
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> -->선언 후 사용
+String 형식 Date변환하여 포맷
+<fmt:parseDate value="${Data_Name}" var="Var_Name" pattern="yyyyMMdd"/>
+<fmt:formatDate value="${Var_Name}" pattern="yyyy.MM.dd"/> (String이 아닐 경우에 해당 줄만 사용)
+
+String형 Number 포맷 후 3자리 마다 콤마
+<fmt:parseNumber var="Var_Name" type="number" value="${Data_Name}" />
+<fmt:formatNumber value="${Var_Name}" pattern="#,###"/> (String이 아닐 경우에 해당 줄만 사용)
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------- fmt end
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%> --> 선언 후 사용
+
+${fn:length(item) }
+item이 배열이나 컬렉션이면 요소의 객수를 문자열이면 문자의 객수를 반환 
+
+${fn:trim(string) } 
+string앞뒤의 공백을 모두 제거하여 반환
+
+${fn:replace(string, before, after) } 
+string내에 있는 before 문자열을 after 문자열로 모두 변경해서 반환
+
+${fn:indexOf(string, sbustring) }
+ string에서 substring이 처음으로 나타나는 인덱스 반환  
+ 
+ ${fn:substring(string, begin, end) } 
+string에서 begin인덱스에서 시작해서 end인덱스에 끝나는 부분의 문자열 반환 
+
+${fn:contains(string, sbustring) } 
+string이 substring을 포함하면 return True 
+
+${fn:containsIgnoreCase(string, sbustring) } 
+대소문자 관계없이 string이 substring을 포함하면 return True
+
+${fn:split(string, separator) } 
+string내의 문자열 separetor에 따라 나누어서 배열로 구성해서 반환
+
+${fn:toLowerCase(string) } 
+string을 모두 소문자로 바꿔 리턴 
+
+${fn:toUpperCase(string) }
+string을 모두 대문자로 바꿔 리턴 
+
+${fn:join(array, separator) } 
+array요소들을 separator를 구분자로 하여 연결해서 반환  
+
+${fn:endsWith(string, suffix) } 
+string이 suffix로 끝나면 return True 
+
+${fn:startsWith(string, prefix) } 
+string이 prefix로 시작하면 return True 
+
+${fn:substringAfter(string, sbustring) } 
+string에서 substring이 나타나는 이후의 문자열 반환
+
+${fn:substringBefore(string, sbustring) } 
+string에서 substring이 나타나는 이전의 문자열 반환  
+
+${fn:escapeXml(string) } 
+stting에 XML과 HTML에서 특별한 의미를 가진 문자들이 있으면,
+XML엔티티 코드로 바꿔준뒤 문자열 반환 

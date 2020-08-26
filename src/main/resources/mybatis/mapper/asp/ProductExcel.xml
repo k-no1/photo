@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kjh.asp.product.dao.ProductExcelDao">
+    <sql id="paging">
+        limit ${offset}, ${limit}
+        <!-- Mytatis offset=0 을  ""로   인식하는 문제로 앞의 로직에서 예외케이스 처리로직 삽입  -->
+    </sql>  
+    
+    <update id="productExcelInsert" parameterType="kjh.common.dto.CamelMap">
+    /* productExcelInsert 상품등록 */
+        INSERT INTO T_PRODUCT
+        (
+             PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,PRODUCT_MGR_NAME
+            ,PRODUCT_TYPE
+            ,PRODUCT_SUBJECT
+            ,PRODUCT_OWNER_ID
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+        )VALUES(
+             #{productId      }
+            ,#{headOfficeId   }
+            ,trim(#{productMgrName })
+            ,#{productType    }
+            <!-- ,#{productSubject } -->
+            <choose>
+                <when test='franchiseId == null'>
+            ,'H'
+                </when>
+                <otherwise>
+            ,'F'
+                </otherwise>
+            </choose>
+            ,#{franchiseId}
+            ,'N'
+            ,NOW()
+            ,#{createdBy      }
+            ,NOW()
+            ,#{updatedBy      }
+        )
+        ON DUPLICATE KEY UPDATE
+         UPDATED_AT       = now() 
+        ,UPDATED_BY       = #{updatedBy}
+        ,PRODUCT_TYPE     = IF( DELETED_YN = 'Y', #{productType}, PRODUCT_TYPE ) 
+        ,DELETED_YN       = 'N'
+    </update>
+    
+    
+    
+    <update id="productExcelDetailInsert" parameterType="kjh.common.dto.CamelMap">
+    /*productExcelDetailInsert 상품상세는 가맹점 등록된 대상 전체이다.(ALL)*/
+        INSERT INTO T_PRODUCT_DETAIL
+        (
+             PRODUCT_DETAIL_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            ,PRODUCT_DETAIL
+            ,PRODUCT_KR
+            ,PRODUCT_EN
+            ,PRODUCT_JP
+            ,PRODUCT_CN
+            ,SALE_STATUS
+            <!-- ,VISIBILITY -->
+            ,SALES_TARGET
+            ,PRIME_COST
+            ,PRICE
+            ,IS_STORE
+            ,STORE_PRICE
+            ,IS_PACKING
+            ,PACKING_PRICE
+            <!-- ,USE_LIMIT -->
+            <!-- ,LIMIT_QTY -->
+            ,BASE_SALE_QTY
+            ,MAX_SALE_QTY
+            ,OUTPUT_QTY
+            ,USE_TAX
+            ,TEXT_BACKGROUND_STYLE
+            ,TEXT_FONT_SIZE
+            ,TEXT_FONT_COLOR
+            ,FILE_ID
+            ,PRODUCT_EXP_KR
+            ,PRODUCT_EXP_EN
+            ,PRODUCT_EXP_JP
+            ,PRODUCT_EXP_CN
+            ,COUPON_CD
+            ,BARCODE_CD
+            ,EXTR_CD
+            ,EXTR2_CD
+            ,EXTR3_CD
+            ,TOUCHING_USE
+            ,TOUCHING_SAVE
+            ,DANGOL_USE
+            ,DANGOL_SAVE
+            ,POINT_USE
+            ,POINT_SAVE
+            ,PRODUCT_TAGS
+            ,PRODUCT_PRINT_NAME
+            ,EXCHANGE_PRINT_QTY
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+            ,VIEW_STATUS_YN
+        )
+        (  SELECT
+             TO_UID()
+            ,TEMP.PRODUCT_ID
+            ,TEMP.HEAD_OFFICE_ID
+            ,F.FRANCHISE_ID
+            ,TEMP.PRODUCT_DETAIL
+            ,TEMP.PRODUCT_KR
+            ,TEMP.PRODUCT_EN
+            ,TEMP.PRODUCT_JP
+            ,TEMP.PRODUCT_CN
+            ,TEMP.SALE_STATUS
+            <!-- ,TEMP.VISIBILITY -->
+            ,TEMP.SALES_TARGET
+            ,TEMP.PRIME_COST
+            ,TEMP.PRICE
+            ,TEMP.IS_STORE
+            ,TEMP.STORE_PRICE
+            ,TEMP.IS_PACKING
+            ,TEMP.PACKING_PRICE
+            <!-- ,TEMP.USE_LIMIT -->
+            <!-- ,TEMP.LIMIT_QTY -->
+            ,TEMP.BASE_SALE_QTY
+            ,TEMP.MAX_SALE_QTY
+            ,TEMP.OUTPUT_QTY
+            ,TEMP.USE_TAX
+            ,TEMP.TEXT_BACKGROUND_STYLE
+            ,TEMP.TEXT_FONT_SIZE
+            ,TEMP.TEXT_FONT_COLOR
+            ,TEMP.FILE_ID
+            ,TEMP.PRODUCT_EXP_KR
+            ,TEMP.PRODUCT_EXP_EN
+            ,TEMP.PRODUCT_EXP_JP
+            ,TEMP.PRODUCT_EXP_CN
+            ,TEMP.COUPON_CD
+            ,TEMP.BARCODE_CD
+            ,TEMP.EXTR_CD
+            ,TEMP.EXTR2_CD
+            ,TEMP.EXTR3_CD
+            ,TEMP.TOUCHING_USE
+            ,TEMP.TOUCHING_SAVE
+            ,TEMP.DANGOL_USE
+            ,TEMP.DANGOL_SAVE
+            ,TEMP.POINT_USE
+            ,TEMP.POINT_SAVE
+            ,TEMP.PRODUCT_TAGS
+            ,TEMP.PRODUCT_PRINT_NAME
+            ,TEMP.EXCHANGE_PRINT_QTY
+            ,TEMP.DELETED_YN
+            ,TEMP.CREATED_AT
+            ,TEMP.CREATED_BY
+            ,TEMP.UPDATED_AT
+            ,TEMP.UPDATED_BY
+            ,'Y'
+            FROM
+            (
+                SELECT
+                     /*상세 입력정보 */
+                     #{productId                 }      AS PRODUCT_ID              
+                    ,#{headOfficeId              }      AS HEAD_OFFICE_ID          
+                    ,#{franchiseId               }      AS FRANCHISE_ID            
+                    ,#{productDetail             }      AS PRODUCT_DETAIL          
+                    ,#{productKr                 }      AS PRODUCT_KR              
+                    ,#{productEn                 }      AS PRODUCT_EN              
+                    ,#{productJp                 }      AS PRODUCT_JP              
+                    ,#{productCn                 }      AS PRODUCT_CN              
+                    ,#{saleStatus                }      AS SALE_STATUS             
+                    <!-- ,#{visibility                    }  AS VISIBILITY               -->
+                    ,#{salesTarget               }      AS SALES_TARGET            
+                    ,IFNULL(#{primeCost          },0)   AS PRIME_COST              
+                    ,null                               AS PRICE                   
+                    ,#{isStore                       }  AS IS_STORE                
+                    ,IFNULL(#{storePrice         },0)   AS STORE_PRICE             
+                    ,#{isPacking                     }  AS IS_PACKING              
+                    ,IFNULL(#{packingPrice       },0)   AS PACKING_PRICE           
+                    <!-- ,#{useLimit                      }  AS USE_LIMIT -->               
+                    <!-- ,#{limitQty                      }  AS LIMIT_QTY -->               
+                    ,IFNULL(#{baseSaleQty        },0)   AS BASE_SALE_QTY           
+                    ,IFNULL(#{maxSaleQty         },0)   AS MAX_SALE_QTY            
+                    ,IFNULL(#{outputQty          },0)   AS OUTPUT_QTY
+                    ,#{useTax                    }      AS USE_TAX                 
+                    ,#{textBackgroundStyle       }      AS TEXT_BACKGROUND_STYLE   
+                    ,#{textFontSize              }      AS TEXT_FONT_SIZE          
+                    ,#{textFontColor             }      AS TEXT_FONT_COLOR         
+                    ,#{fileId                    }      AS FILE_ID                 
+                    ,#{productExpKr              }      AS PRODUCT_EXP_KR          
+                    ,#{productExpEn              }      AS PRODUCT_EXP_EN          
+                    ,#{productExpJp              }      AS PRODUCT_EXP_JP          
+                    ,#{productExpCn              }      AS PRODUCT_EXP_CN          
+                    ,#{couponCd                  }      AS COUPON_CD               
+                    ,#{barcodeCd                 }      AS BARCODE_CD              
+                    ,#{extrCd                    }      AS EXTR_CD                 
+                    ,#{extr2Cd                   }      AS EXTR2_CD                
+                    ,#{extr3Cd                   }      AS EXTR3_CD                
+                    ,'FALSE'                            AS TOUCHING_USE            
+                    ,'FALSE'                            AS TOUCHING_SAVE           
+                    ,'FALSE'                            AS DANGOL_USE              
+                    ,'FALSE'                            AS DANGOL_SAVE
+                    ,#{pointUse                  }      AS POINT_USE              
+                    ,#{pointSave                 }      AS POINT_SAVE             
+                    ,#{productTags               }      AS PRODUCT_TAGS            
+                    ,#{productPrintName          }      AS PRODUCT_PRINT_NAME      
+                    ,null                               AS EXCHANGE_PRINT_QTY      
+                    ,'N'                                AS DELETED_YN              
+                    ,NOW()                              AS CREATED_AT              
+                    ,#{createdBy                 }      AS CREATED_BY              
+                    ,NOW()                              AS UPDATED_AT              
+                    ,#{updatedBy                 }      AS UPDATED_BY              
+                 FROM DUAL
+           ) TEMP CROSS JOIN (
+                    SELECT 
+                        FRANCHISE_ID 
+                     FROM T_FRANCHISE 
+                    WHERE HEAD_OFFICE_ID = #{headOfficeId}
+                    <if test='franchiseId != null and franchiseId != ""'>
+                      AND FRANCHISE_ID   = #{franchiseId}
+                    </if>
+                    UNION ALL
+                    SELECT '' FROM DUAL
+                  ) F
+           GROUP BY
+                     TEMP.PRODUCT_ID
+                    ,TEMP.HEAD_OFFICE_ID
+                    ,F.FRANCHISE_ID
+                    ,TEMP.PRODUCT_DETAIL
+                    ,TEMP.PRODUCT_KR
+                    ,TEMP.PRODUCT_EN
+                    ,TEMP.PRODUCT_JP
+                    ,TEMP.PRODUCT_CN
+                    ,TEMP.SALE_STATUS
+                    <!-- ,TEMP.VISIBILITY -->
+                    ,TEMP.SALES_TARGET
+                    ,TEMP.PRIME_COST
+                    ,TEMP.PRICE
+                    ,TEMP.IS_STORE
+                    ,TEMP.STORE_PRICE
+                    ,TEMP.IS_PACKING
+                    ,TEMP.PACKING_PRICE
+                    <!-- ,TEMP.USE_LIMIT -->
+                    <!-- ,TEMP.LIMIT_QTY -->
+                    ,TEMP.BASE_SALE_QTY
+                    ,TEMP.MAX_SALE_QTY
+                    ,TEMP.OUTPUT_QTY
+                    ,TEMP.USE_TAX
+                    ,TEMP.TEXT_BACKGROUND_STYLE
+                    ,TEMP.TEXT_FONT_SIZE
+                    ,TEMP.TEXT_FONT_COLOR
+                    ,TEMP.FILE_ID
+                    ,TEMP.PRODUCT_EXP_KR
+                    ,TEMP.PRODUCT_EXP_EN
+                    ,TEMP.PRODUCT_EXP_JP
+                    ,TEMP.PRODUCT_EXP_CN
+                    ,TEMP.COUPON_CD
+                    ,TEMP.BARCODE_CD
+                    ,TEMP.EXTR_CD
+                    ,TEMP.EXTR2_CD
+                    ,TEMP.EXTR3_CD
+                    ,TEMP.TOUCHING_USE
+                    ,TEMP.TOUCHING_SAVE
+                    ,TEMP.DANGOL_USE
+                    ,TEMP.DANGOL_SAVE
+                    ,TEMP.POINT_USE
+                    ,TEMP.POINT_SAVE
+                    ,TEMP.PRODUCT_TAGS
+                    ,TEMP.PRODUCT_PRINT_NAME
+                    ,TEMP.EXCHANGE_PRINT_QTY
+                    ,TEMP.DELETED_YN
+                    ,TEMP.CREATED_AT
+                    ,TEMP.CREATED_BY
+                    ,TEMP.UPDATED_AT
+                    ,TEMP.UPDATED_BY
+      )
+      ON DUPLICATE KEY UPDATE
+         UPDATED_AT            = now()
+        ,UPDATED_BY            = #{updatedBy}
+        <if test='franchiseId == null or franchiseId == ""'>
+        ,PRODUCT_KR            = #{productKr                 }  
+        ,PRODUCT_EN            = #{productEn                 }  
+        ,PRODUCT_JP            = #{productJp                 }  
+        ,PRODUCT_CN            = #{productCn                 }  
+        ,SALE_STATUS           = #{saleStatus                }  
+        <!-- ,VISIBILITY       = #{visibility} -->            
+        ,SALES_TARGET          = #{salesTarget               }  
+        ,PRIME_COST            = IFNULL(#{primeCost          },0)  
+        ,PRICE                 = null 
+        ,IS_STORE              = #{isStore                   }  
+        ,STORE_PRICE           = IFNULL(#{storePrice         },0)  
+        ,IS_PACKING            = #{isPacking                 }  
+        ,PACKING_PRICE         = IFNULL(#{packingPrice       },0)  
+        <!-- ,USE_LIMIT        =  ,#{useLimit }-->              
+        <!-- ,LIMIT_QTY        =  ,#{limitQty }-->             
+        ,BASE_SALE_QTY         = IFNULL(#{baseSaleQty        },0)  
+        ,MAX_SALE_QTY          = IFNULL(#{maxSaleQty         },0)
+        ,OUTPUT_QTY            = IFNULL(#{outputQty          },0)  
+        ,USE_TAX               = #{useTax                    }  
+        ,FILE_ID               = #{fileId                    }  
+        ,PRODUCT_EXP_KR        = #{productExpKr              }  
+        ,PRODUCT_EXP_EN        = #{productExpEn              }  
+        ,PRODUCT_EXP_JP        = #{productExpJp              }  
+        ,PRODUCT_EXP_CN        = #{productExpCn              }  
+        ,COUPON_CD             = #{couponCd                  }  
+        ,BARCODE_CD            = #{barcodeCd                 }  
+        ,EXTR_CD               = #{extrCd                    }  
+        ,EXTR2_CD              = #{extr2Cd                   }  
+        ,EXTR3_CD              = #{extr3Cd                   }  
+        ,TOUCHING_USE          = 'FALSE'
+        ,TOUCHING_SAVE         = 'FALSE'
+        ,DANGOL_USE            = 'FALSE'
+        ,DANGOL_SAVE           = 'FALSE'
+        ,POINT_USE             = #{pointUse                  }
+        ,POINT_SAVE            = #{pointSave                 }
+        ,PRODUCT_TAGS          = #{productTags               }  
+        </if>
+        <if test='franchiseId != null and franchiseId != ""'>
+        ;
+        INSERT INTO T_PRODUCT_DETAIL
+        (
+             PRODUCT_DETAIL_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            ,PRODUCT_DETAIL
+            ,PRODUCT_KR
+            ,PRODUCT_EN
+            ,PRODUCT_JP
+            ,PRODUCT_CN
+            ,SALE_STATUS
+            <!-- ,VISIBILITY -->
+            ,SALES_TARGET
+            ,PRIME_COST
+            ,PRICE
+            ,IS_STORE
+            ,STORE_PRICE
+            ,IS_PACKING
+            ,PACKING_PRICE
+            <!-- ,USE_LIMIT -->
+            <!-- ,LIMIT_QTY -->
+            ,BASE_SALE_QTY
+            ,MAX_SALE_QTY
+            ,OUTPUT_QTY
+            ,USE_TAX
+            ,TEXT_BACKGROUND_STYLE
+            ,TEXT_FONT_SIZE
+            ,TEXT_FONT_COLOR
+            ,FILE_ID
+            ,PRODUCT_EXP_KR
+            ,PRODUCT_EXP_EN
+            ,PRODUCT_EXP_JP
+            ,PRODUCT_EXP_CN
+            ,COUPON_CD
+            ,BARCODE_CD
+            ,EXTR_CD
+            ,EXTR2_CD
+            ,EXTR3_CD
+            ,TOUCHING_USE
+            ,TOUCHING_SAVE
+            ,DANGOL_USE
+            ,DANGOL_SAVE
+            ,POINT_USE
+            ,POINT_SAVE
+            ,PRODUCT_TAGS
+            ,PRODUCT_PRINT_NAME
+            ,EXCHANGE_PRINT_QTY
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+            ,VIEW_STATUS_YN
+        )
+        (  SELECT
+             TO_UID()
+            ,TEMP.PRODUCT_ID
+            ,TEMP.HEAD_OFFICE_ID
+            ,F.FRANCHISE_ID
+            ,TEMP.PRODUCT_DETAIL
+            ,TEMP.PRODUCT_KR
+            ,TEMP.PRODUCT_EN
+            ,TEMP.PRODUCT_JP
+            ,TEMP.PRODUCT_CN
+            ,TEMP.SALE_STATUS
+            <!-- ,TEMP.VISIBILITY -->
+            ,TEMP.SALES_TARGET
+            ,TEMP.PRIME_COST
+            ,TEMP.PRICE
+            ,TEMP.IS_STORE
+            ,TEMP.STORE_PRICE
+            ,TEMP.IS_PACKING
+            ,TEMP.PACKING_PRICE
+            <!-- ,TEMP.USE_LIMIT -->
+            <!-- ,TEMP.LIMIT_QTY -->
+            ,TEMP.BASE_SALE_QTY
+            ,TEMP.MAX_SALE_QTY
+            ,TEMP.OUTPUT_QTY
+            ,TEMP.USE_TAX
+            ,TEMP.TEXT_BACKGROUND_STYLE
+            ,TEMP.TEXT_FONT_SIZE
+            ,TEMP.TEXT_FONT_COLOR
+            ,TEMP.FILE_ID
+            ,TEMP.PRODUCT_EXP_KR
+            ,TEMP.PRODUCT_EXP_EN
+            ,TEMP.PRODUCT_EXP_JP
+            ,TEMP.PRODUCT_EXP_CN
+            ,TEMP.COUPON_CD
+            ,TEMP.BARCODE_CD
+            ,TEMP.EXTR_CD
+            ,TEMP.EXTR2_CD
+            ,TEMP.EXTR3_CD
+            ,TEMP.TOUCHING_USE
+            ,TEMP.TOUCHING_SAVE
+            ,TEMP.DANGOL_USE
+            ,TEMP.DANGOL_SAVE
+            ,TEMP.POINT_USE
+            ,TEMP.POINT_SAVE
+            ,TEMP.PRODUCT_TAGS
+            ,TEMP.PRODUCT_PRINT_NAME
+            ,TEMP.EXCHANGE_PRINT_QTY
+            ,TEMP.DELETED_YN
+            ,TEMP.CREATED_AT
+            ,TEMP.CREATED_BY
+            ,TEMP.UPDATED_AT
+            ,TEMP.UPDATED_BY
+            ,'Y'
+            FROM
+            (
+                SELECT
+                     /*상세 입력정보 */
+                     #{productId                 }      AS PRODUCT_ID              
+                    ,#{headOfficeId              }      AS HEAD_OFFICE_ID          
+                    ,#{franchiseId               }      AS FRANCHISE_ID            
+                    ,#{productDetail             }      AS PRODUCT_DETAIL          
+                    ,#{productKr                 }      AS PRODUCT_KR              
+                    ,#{productEn                 }      AS PRODUCT_EN              
+                    ,#{productJp                 }      AS PRODUCT_JP              
+                    ,#{productCn                 }      AS PRODUCT_CN              
+                    ,#{saleStatus                }      AS SALE_STATUS             
+                    <!-- ,#{visibility                    }  AS VISIBILITY               -->
+                    ,#{salesTarget               }      AS SALES_TARGET            
+                    ,IFNULL(#{primeCost          },0)   AS PRIME_COST              
+                    ,null                               AS PRICE                   
+                    ,#{isStore                       }  AS IS_STORE                
+                    ,IFNULL(#{storePrice         },0)   AS STORE_PRICE             
+                    ,#{isPacking                     }  AS IS_PACKING              
+                    ,IFNULL(#{packingPrice       },0)   AS PACKING_PRICE           
+                    <!-- ,#{useLimit                      }  AS USE_LIMIT -->               
+                    <!-- ,#{limitQty                      }  AS LIMIT_QTY -->               
+                    ,IFNULL(#{baseSaleQty        },0)   AS BASE_SALE_QTY           
+                    ,IFNULL(#{maxSaleQty         },0)   AS MAX_SALE_QTY            
+                    ,IFNULL(#{outputQty          },0)   AS OUTPUT_QTY
+                    ,#{useTax                    }      AS USE_TAX                 
+                    ,#{textBackgroundStyle       }      AS TEXT_BACKGROUND_STYLE   
+                    ,#{textFontSize              }      AS TEXT_FONT_SIZE          
+                    ,#{textFontColor             }      AS TEXT_FONT_COLOR         
+                    ,#{fileId                    }      AS FILE_ID                 
+                    ,#{productExpKr              }      AS PRODUCT_EXP_KR          
+                    ,#{productExpEn              }      AS PRODUCT_EXP_EN          
+                    ,#{productExpJp              }      AS PRODUCT_EXP_JP          
+                    ,#{productExpCn              }      AS PRODUCT_EXP_CN          
+                    ,#{couponCd                  }      AS COUPON_CD               
+                    ,#{barcodeCd                 }      AS BARCODE_CD              
+                    ,#{extrCd                    }      AS EXTR_CD                 
+                    ,#{extr2Cd                   }      AS EXTR2_CD                
+                    ,#{extr3Cd                   }      AS EXTR3_CD                
+                    ,'FALSE'                            AS TOUCHING_USE            
+                    ,'FALSE'                            AS TOUCHING_SAVE           
+                    ,'FALSE'                            AS DANGOL_USE              
+                    ,'FALSE'                            AS DANGOL_SAVE             
+                    ,#{pointUse                  }      AS POINT_USE
+                    ,#{pointSave                 }      AS POINT_SAVE
+                    ,#{productTags               }      AS PRODUCT_TAGS            
+                    ,#{productPrintName          }      AS PRODUCT_PRINT_NAME      
+                    ,null                               AS EXCHANGE_PRINT_QTY      
+                    ,'N'                                AS DELETED_YN              
+                    ,NOW()                              AS CREATED_AT              
+                    ,#{createdBy                 }      AS CREATED_BY              
+                    ,NOW()                              AS UPDATED_AT              
+                    ,#{updatedBy                 }      AS UPDATED_BY              
+                 FROM DUAL
+           ) TEMP CROSS JOIN (
+                    SELECT 
+                        FRANCHISE_ID 
+                     FROM T_FRANCHISE 
+                    WHERE HEAD_OFFICE_ID = #{headOfficeId}
+                      AND FRANCHISE_ID   = #{franchiseId}
+                  ) F
+           GROUP BY
+                     TEMP.PRODUCT_ID
+                    ,TEMP.HEAD_OFFICE_ID
+                    ,F.FRANCHISE_ID
+                    ,TEMP.PRODUCT_DETAIL
+                    ,TEMP.PRODUCT_KR
+                    ,TEMP.PRODUCT_EN
+                    ,TEMP.PRODUCT_JP
+                    ,TEMP.PRODUCT_CN
+                    ,TEMP.SALE_STATUS
+                    <!-- ,TEMP.VISIBILITY -->
+                    ,TEMP.SALES_TARGET
+                    ,TEMP.PRIME_COST
+                    ,TEMP.PRICE
+                    ,TEMP.IS_STORE
+                    ,TEMP.STORE_PRICE
+                    ,TEMP.IS_PACKING
+                    ,TEMP.PACKING_PRICE
+                    <!-- ,TEMP.USE_LIMIT -->
+                    <!-- ,TEMP.LIMIT_QTY -->
+                    ,TEMP.BASE_SALE_QTY
+                    ,TEMP.MAX_SALE_QTY
+                    ,TEMP.OUTPUT_QTY
+                    ,TEMP.USE_TAX
+                    ,TEMP.TEXT_BACKGROUND_STYLE
+                    ,TEMP.TEXT_FONT_SIZE
+                    ,TEMP.TEXT_FONT_COLOR
+                    ,TEMP.FILE_ID
+                    ,TEMP.PRODUCT_EXP_KR
+                    ,TEMP.PRODUCT_EXP_EN
+                    ,TEMP.PRODUCT_EXP_JP
+                    ,TEMP.PRODUCT_EXP_CN
+                    ,TEMP.COUPON_CD
+                    ,TEMP.BARCODE_CD
+                    ,TEMP.EXTR_CD
+                    ,TEMP.EXTR2_CD
+                    ,TEMP.EXTR3_CD
+                    ,TEMP.TOUCHING_USE
+                    ,TEMP.TOUCHING_SAVE
+                    ,TEMP.DANGOL_USE
+                    ,TEMP.DANGOL_SAVE
+		            ,TEMP.POINT_USE
+		            ,TEMP.POINT_SAVE
+                    ,TEMP.PRODUCT_TAGS
+                    ,TEMP.PRODUCT_PRINT_NAME
+                    ,TEMP.EXCHANGE_PRINT_QTY
+                    ,TEMP.DELETED_YN
+                    ,TEMP.CREATED_AT
+                    ,TEMP.CREATED_BY
+                    ,TEMP.UPDATED_AT
+                    ,TEMP.UPDATED_BY
+      )
+      ON DUPLICATE KEY UPDATE
+         UPDATED_AT            = now()
+        ,UPDATED_BY            = #{updatedBy}
+        ,PRODUCT_KR            = #{productKr                 }  
+        ,PRODUCT_EN            = #{productEn                 }  
+        ,PRODUCT_JP            = #{productJp                 }  
+        ,PRODUCT_CN            = #{productCn                 }  
+        ,SALE_STATUS           = #{saleStatus                }  
+        <!-- ,VISIBILITY       = #{visibility} -->            
+        ,SALES_TARGET          = #{salesTarget               }  
+        ,PRIME_COST            = IFNULL(#{primeCost          },0)  
+        ,PRICE                 = null 
+        ,IS_STORE              = #{isStore                   }  
+        ,STORE_PRICE           = IFNULL(#{storePrice         },0)  
+        ,IS_PACKING            = #{isPacking                 }  
+        ,PACKING_PRICE         = IFNULL(#{packingPrice       },0)  
+        <!-- ,USE_LIMIT        =  ,#{useLimit }-->              
+        <!-- ,LIMIT_QTY        =  ,#{limitQty }-->             
+        ,BASE_SALE_QTY         = IFNULL(#{baseSaleQty        },0)  
+        ,MAX_SALE_QTY          = IFNULL(#{maxSaleQty         },0)  
+        ,OUTPUT_QTY            = IFNULL(#{outputQty          },0)
+        ,USE_TAX               = #{useTax                    }  
+        ,FILE_ID               = #{fileId                    }  
+        ,PRODUCT_EXP_KR        = #{productExpKr              }  
+        ,PRODUCT_EXP_EN        = #{productExpEn              }  
+        ,PRODUCT_EXP_JP        = #{productExpJp              }  
+        ,PRODUCT_EXP_CN        = #{productExpCn              }  
+        ,COUPON_CD             = #{couponCd                  }  
+        ,BARCODE_CD            = #{barcodeCd                 }  
+        ,EXTR_CD               = #{extrCd                    }  
+        ,EXTR2_CD              = #{extr2Cd                   }  
+        ,EXTR3_CD              = #{extr3Cd                   }  
+        ,TOUCHING_USE          = 'FALSE'  
+        ,TOUCHING_SAVE         = 'FALSE'  
+        ,DANGOL_USE            = 'FALSE'  
+        ,DANGOL_SAVE           = 'FALSE'  
+        ,POINT_USE             = #{pointUse                  }
+        ,POINT_SAVE            = #{pointSave                 }
+        ,PRODUCT_TAGS          = #{productTags               }  
+        </if>
+    </update>
+    
+
+    <update id="productExcelStockInsert" parameterType="kjh.common.dto.CamelMap">
+    /*productExcelStockInsert T_PRODUCT_STOCK 일괄등록*/
+       INSERT INTO T_PRODUCT_STOCK
+        (
+             PRODUCT_STOCK_ID
+            ,PRODUCT_DETAIL_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            <!-- ,USE_LIMIT -->
+            <!-- ,LIMIT_QTY -->
+            ,SOLDOUT_YN
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+            ,VISIBILITY
+        )
+        SELECT 
+             TO_UID()
+            ,TEMP.PRODUCT_DETAIL_ID 
+            ,TEMP.PRODUCT_ID       
+            ,TEMP.HEAD_OFFICE_ID   
+            ,TEMP.FRANCHISE_ID     
+            <!-- ,TEMP.USE_LIMIT -->        
+            <!-- ,TEMP.LIMIT_QTY         -->
+            ,TEMP.SOLDOUT_YN        
+            ,TEMP.DELETED_YN       
+            ,TEMP.CREATED_AT       
+            ,TEMP.CREATED_BY       
+            ,TEMP.UPDATED_AT       
+            ,TEMP.UPDATED_BY       
+            ,TEMP.VISIBILITY
+            FROM
+            (
+                SELECT
+                     /*stock*/
+                     PRODUCT_DETAIL_ID     AS PRODUCT_DETAIL_ID  
+                    ,PRODUCT_ID            AS PRODUCT_ID        
+                    ,HEAD_OFFICE_ID        AS HEAD_OFFICE_ID    
+                    ,FRANCHISE_ID          AS FRANCHISE_ID      
+                    <!-- ,#{useLimit        }   AS USE_LIMIT -->         
+                    <!-- ,#{limitQty        }   AS LIMIT_QTY -->         
+                    ,#{soldoutYn       }   AS SOLDOUT_YN        
+                    ,'N'                   AS DELETED_YN        
+                    ,now()                 AS CREATED_AT        
+                    ,#{createdBy       }   AS CREATED_BY        
+                    ,now()                 AS UPDATED_AT        
+                    ,#{updatedBy       }   AS UPDATED_BY        
+                    ,#{visibility}         AS VISIBILITY
+                FROM T_PRODUCT_DETAIL
+                WHERE HEAD_OFFICE_ID = #{headOfficeId}
+                  AND PRODUCT_ID     = #{productId}
+                  <if test='franchiseId != "" and franchiseId != null'>
+                  AND FRANCHISE_ID   IN ( #{franchiseId},'')
+                  </if>
+            ) TEMP
+        ON DUPLICATE KEY UPDATE
+        UPDATED_AT = now()
+       ,UPDATED_BY = #{updatedBy}
+       <if test='franchiseId == null or franchiseId == ""'>
+        <!--가맹점 변경 방지 -->
+       ,VISIBILITY = #{visibility}
+       ,SOLDOUT_YN = #{soldoutYn }
+       </if>
+       <if test='franchiseId != null and franchiseId != ""'>
+       ;
+       <!--가맹점 처리시 자기 자신것은 바꿀수 있도록 처리 -->
+       INSERT INTO T_PRODUCT_STOCK
+        (
+             PRODUCT_STOCK_ID
+            ,PRODUCT_DETAIL_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            <!-- ,USE_LIMIT -->
+            <!-- ,LIMIT_QTY -->
+            ,SOLDOUT_YN 
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+            ,VISIBILITY
+        )
+        SELECT 
+             TO_UID()
+            ,TEMP.PRODUCT_DETAIL_ID 
+            ,TEMP.PRODUCT_ID       
+            ,TEMP.HEAD_OFFICE_ID   
+            ,TEMP.FRANCHISE_ID     
+            <!-- ,TEMP.USE_LIMIT -->        
+            <!-- ,TEMP.LIMIT_QTY         -->
+            ,TEMP.SOLDOUT_YN        
+            ,TEMP.DELETED_YN       
+            ,TEMP.CREATED_AT       
+            ,TEMP.CREATED_BY       
+            ,TEMP.UPDATED_AT       
+            ,TEMP.UPDATED_BY       
+            ,TEMP.VISIBILITY
+            FROM
+            (
+                SELECT
+                     /*stock*/
+                     PRODUCT_DETAIL_ID     AS PRODUCT_DETAIL_ID  
+                    ,PRODUCT_ID            AS PRODUCT_ID        
+                    ,HEAD_OFFICE_ID        AS HEAD_OFFICE_ID    
+                    ,FRANCHISE_ID          AS FRANCHISE_ID      
+                    <!-- ,#{useLimit        }   AS USE_LIMIT -->         
+                    <!-- ,#{limitQty        }   AS LIMIT_QTY -->         
+                    ,#{soldoutYn       }   AS SOLDOUT_YN         
+                    ,'N'                   AS DELETED_YN        
+                    ,now()                 AS CREATED_AT        
+                    ,#{createdBy       }   AS CREATED_BY        
+                    ,now()                 AS UPDATED_AT        
+                    ,#{updatedBy       }   AS UPDATED_BY        
+                    ,#{visibility}         AS VISIBILITY
+                FROM T_PRODUCT_DETAIL
+                WHERE HEAD_OFFICE_ID = #{headOfficeId}
+                  AND PRODUCT_ID     = #{productId}
+                  AND FRANCHISE_ID   = #{franchiseId}
+            ) TEMP
+        ON DUPLICATE KEY UPDATE
+        UPDATED_AT = now()
+       ,UPDATED_BY = #{updatedBy }
+       ,VISIBILITY = #{visibility}
+       ,SOLDOUT_YN = #{soldoutYn }
+       </if>
+    </update>
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+        http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+    <context:component-scan base-package="kjh.*" />
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven />
+    
+    <mvc:resources mapping="/static/**"   location="/static/"             cache-period="3600" />
+    <mvc:resources mapping="/favicon.ico" location="/static/favicon.ico"  cache-period="3600" />
+
+   <beans:bean id="jsonMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+    <beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+        <beans:property name="contentType" value="application/json;charset=UTF-8"></beans:property>
+        <beans:property name="objectMapper" ref="jsonMapper" />
+    </beans:bean>
+        <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+        <beans:property name="order" value="0"/>
+    </beans:bean>
+
+    <bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/ui</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+	<aop:aspectj-autoproxy />
+
+	<context:property-placeholder location="classpath:application.properties" />
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="url"                           value="${dataSource.url}" />
+		<property name="driverClassName"               value="${dataSource.driverClassName}" />
+		<property name="username"                      value="${dataSource.username}" />
+		<property name="password"                      value="${dataSource.password}" />
+		<property name="initialSize"                   value="${dataSource.initialSize}" />
+		<property name="maxActive"                     value="${dataSource.maxActive}" />
+		<property name="maxIdle"                       value="${dataSource.maxIdle}" />
+		<property name="minIdle"                       value="${dataSource.minIdle}" />
+		<property name="maxWait"                       value="${dataSource.maxWait}" />
+		<property name="poolPreparedStatements"        value="${dataSource.poolPreparedStatements}" />
+		<property name="maxOpenPreparedStatements"     value="${dataSource.maxOpenPreparedStatements}" />
+		<property name="validationQuery"               value="${dataSource.validationQuery}" />
+		<property name="testWhileIdle"                 value="${dataSource.testWhileIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${dataSource.timeBetweenEvictionRunsMillis}" />
+	</bean>
+
+	<bean id="mapper" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="kjh." />
+	</bean>
+
+	<bean id="sqlSessionFactory" name="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean" lazy-init="true">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mybatis/mapper/**/*.xml" />
+		<property name="configLocation"  value="classpath:mybatis/mybatis-config.xml" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="readOnly*" isolation="READ_UNCOMMITTED" />
+			<tx:method name="*" isolation="READ_COMMITTED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="serviceOperations" expression="execution(* kjh..*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperations" />
+	</aop:config>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+    <mvc:cors>
+        <mvc:mapping path="/**" />
+    </mvc:cors>
+
+	<!-- properties.xml -->
+	<util:properties id="config"    location="/WEB-INF/spring/properties/properties.xml"></util:properties>
+	<util:properties id="msgconfig" location="/WEB-INF/spring/properties/properties-message.xml"></util:properties>
+
+    <!-- <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value="0"></beans:property>
+	</beans:bean> -->
+
+
+	<!-- File upload -->
+	<beans:bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="200000000"></beans:property>
+	</beans:bean>
+
+<!-- 
+	<bean id="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean" />
+ -->
+</beans>

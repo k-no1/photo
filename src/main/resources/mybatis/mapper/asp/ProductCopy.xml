@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kjh.asp.product.dao.ProductCopyDao">
+
+
+
+    <update id="productCopyProductDetail" parameterType="kjh.common.dto.CamelMap">
+    #1-1. 상품상세 저장 T_PRODUCT_DETAIL
+    INSERT INTO T_PRODUCT_DETAIL
+    (
+         PRODUCT_DETAIL_ID
+        ,PRODUCT_ID
+        ,HEAD_OFFICE_ID
+        ,FRANCHISE_ID
+        ,PRODUCT_DETAIL
+        ,PRODUCT_KR
+        ,PRODUCT_EN
+        ,PRODUCT_JP
+        ,PRODUCT_CN
+        ,SALE_STATUS
+        <!-- ,VISIBILITY -->
+        ,SALES_TARGET
+        ,PRIME_COST
+        ,PRICE
+        ,IS_STORE
+        ,STORE_PRICE
+        ,IS_PACKING
+        ,PACKING_PRICE
+        <!-- ,USE_LIMIT -->
+        <!-- ,LIMIT_QTY -->
+        ,BASE_SALE_QTY
+        ,MAX_SALE_QTY
+        ,OUTPUT_QTY
+        ,USE_TAX
+        ,TEXT_BACKGROUND_STYLE
+        ,TEXT_FONT_SIZE
+        ,TEXT_FONT_COLOR
+        ,FILE_ID
+        ,PRODUCT_EXP_KR
+        ,PRODUCT_EXP_EN
+        ,PRODUCT_EXP_JP
+        ,PRODUCT_EXP_CN
+        ,COUPON_CD
+        ,BARCODE_CD
+        ,EXTR_CD
+        ,EXTR2_CD
+        ,EXTR3_CD
+        ,TOUCHING_USE
+        ,TOUCHING_SAVE
+        ,DANGOL_USE
+        ,DANGOL_SAVE
+        ,POINT_USE
+        ,POINT_SAVE
+        ,PRODUCT_TAGS
+        ,PRODUCT_PRINT_NAME
+        ,EXCHANGE_PRINT_QTY
+        ,SOUND_KR                
+        ,SOUND_EN                
+        ,SOUND_JP                
+        ,SOUND_CN                
+        ,DELETED_YN
+        ,CREATED_AT
+        ,CREATED_BY
+        ,UPDATED_AT
+        ,UPDATED_BY
+        ,VIEW_STATUS_YN
+    )
+    (
+     SELECT
+      *
+      FROM
+      (
+        SELECT 
+             TO_UID() PRODUCT_DETAIL_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,#{franchiseId} FRANCHISE_ID
+            ,PRODUCT_DETAIL
+            ,PRODUCT_KR
+            ,PRODUCT_EN
+            ,PRODUCT_JP
+            ,PRODUCT_CN
+            ,SALE_STATUS
+            <!-- ,VISIBILITY -->
+            ,SALES_TARGET
+            ,PRIME_COST
+            ,PRICE
+            ,IS_STORE
+            ,STORE_PRICE
+            ,IS_PACKING
+            ,PACKING_PRICE
+            <!-- ,USE_LIMIT -->
+            <!-- ,LIMIT_QTY -->
+            ,BASE_SALE_QTY
+            ,MAX_SALE_QTY
+            ,OUTPUT_QTY
+            ,USE_TAX
+            ,TEXT_BACKGROUND_STYLE
+            ,TEXT_FONT_SIZE
+            ,TEXT_FONT_COLOR
+            ,FILE_ID
+            ,PRODUCT_EXP_KR
+            ,PRODUCT_EXP_EN
+            ,PRODUCT_EXP_JP
+            ,PRODUCT_EXP_CN
+            ,COUPON_CD
+            ,BARCODE_CD
+            ,EXTR_CD
+            ,EXTR2_CD
+            ,EXTR3_CD
+            ,TOUCHING_USE
+            ,TOUCHING_SAVE
+            ,DANGOL_USE
+            ,DANGOL_SAVE
+            ,POINT_USE
+            ,POINT_SAVE
+            ,PRODUCT_TAGS
+            ,PRODUCT_PRINT_NAME
+            ,EXCHANGE_PRINT_QTY
+            ,SOUND_KR           
+            ,SOUND_EN           
+            ,SOUND_JP           
+            ,SOUND_CN           
+            ,DELETED_YN
+            ,now() CREATED_AT
+            ,#{createdBy} CREATED_BY
+            ,now() UPDATED_AT
+            ,#{updatedBy} UPDATED_BY
+            ,VIEW_STATUS_YN
+             FROM T_PRODUCT_DETAIL
+            WHERE HEAD_OFFICE_ID = #{headOfficeId}
+              AND PRODUCT_ID     = #{productId}
+            <choose>
+                <when test='franchiseId2 != "" and franchiseId2 != null'>
+              AND FRANCHISE_ID   = #{franchiseId2}
+                </when>
+                <otherwise>
+              AND FRANCHISE_ID   = ''  
+                </otherwise>
+            </choose>
+       ) TEMP
+    )
+        ON DUPLICATE KEY UPDATE
+        UPDATED_AT            = now()
+       ,UPDATED_BY            = #{updatedBy}
+       ,PRODUCT_DETAIL        = TEMP.PRODUCT_DETAIL        
+       ,PRODUCT_KR            = TEMP.PRODUCT_KR            
+       ,PRODUCT_EN            = TEMP.PRODUCT_EN            
+       ,PRODUCT_JP            = TEMP.PRODUCT_JP            
+       ,PRODUCT_CN            = TEMP.PRODUCT_CN            
+       ,SALE_STATUS           = TEMP.SALE_STATUS           
+       <!-- ,VISIBILITY            = TEMP.VISIBILITY             -->
+       ,SALES_TARGET          = TEMP.SALES_TARGET          
+       ,PRIME_COST            = TEMP.PRIME_COST            
+       ,PRICE                 = TEMP.PRICE                 
+       ,IS_STORE              = TEMP.IS_STORE              
+       ,STORE_PRICE           = TEMP.STORE_PRICE           
+       ,IS_PACKING            = TEMP.IS_PACKING            
+       ,PACKING_PRICE         = TEMP.PACKING_PRICE         
+       <!-- ,USE_LIMIT             = TEMP.USE_LIMIT -->             
+       <!-- ,LIMIT_QTY             = TEMP.LIMIT_QTY          -->    
+       ,BASE_SALE_QTY         = TEMP.BASE_SALE_QTY         
+       ,MAX_SALE_QTY          = TEMP.MAX_SALE_QTY
+       ,OUTPUT_QTY            = TEMP.OUTPUT_QTY          
+       ,USE_TAX               = TEMP.USE_TAX               
+       ,TEXT_BACKGROUND_STYLE = TEMP.TEXT_BACKGROUND_STYLE 
+       ,TEXT_FONT_SIZE        = TEMP.TEXT_FONT_SIZE        
+       ,TEXT_FONT_COLOR       = TEMP.TEXT_FONT_COLOR       
+       ,FILE_ID               = TEMP.FILE_ID               
+       ,PRODUCT_EXP_KR        = TEMP.PRODUCT_EXP_KR        
+       ,PRODUCT_EXP_EN        = TEMP.PRODUCT_EXP_EN        
+       ,PRODUCT_EXP_JP        = TEMP.PRODUCT_EXP_JP        
+       ,PRODUCT_EXP_CN        = TEMP.PRODUCT_EXP_CN        
+       ,COUPON_CD             = TEMP.COUPON_CD             
+       ,BARCODE_CD            = TEMP.BARCODE_CD            
+       ,EXTR_CD               = TEMP.EXTR_CD               
+       ,EXTR2_CD              = TEMP.EXTR2_CD              
+       ,EXTR3_CD              = TEMP.EXTR3_CD              
+       ,TOUCHING_USE          = TEMP.TOUCHING_USE          
+       ,TOUCHING_SAVE         = TEMP.TOUCHING_SAVE         
+       ,DANGOL_USE            = TEMP.DANGOL_USE            
+       ,DANGOL_SAVE           = TEMP.DANGOL_SAVE           
+       ,POINT_USE             = TEMP.POINT_USE
+       ,POINT_SAVE            = TEMP.POINT_SAVE
+       ,PRODUCT_TAGS          = TEMP.PRODUCT_TAGS          
+       ,PRODUCT_PRINT_NAME    = TEMP.PRODUCT_PRINT_NAME    
+       ,EXCHANGE_PRINT_QTY    = TEMP.EXCHANGE_PRINT_QTY    
+       ,SOUND_KR              = TEMP.SOUND_KR
+       ,SOUND_EN              = TEMP.SOUND_EN
+       ,SOUND_JP              = TEMP.SOUND_JP
+       ,SOUND_CN              = TEMP.SOUND_CN
+       ,DELETED_YN            = TEMP.DELETED_YN            
+       ,UPDATED_AT            = TEMP.UPDATED_AT            
+       ,UPDATED_BY            = TEMP.UPDATED_BY            
+       ,VIEW_STATUS_YN        = TEMP.VIEW_STATUS_YN        
+    </update>
+    
+    
+    
+    <update id="productCopyProductStock" parameterType="kjh.common.dto.CamelMap">
+    #1-2. 상품현황 저장 T_PRODUCT_STOCK
+        INSERT INTO T_PRODUCT_STOCK
+        (
+             PRODUCT_STOCK_ID
+            ,PRODUCT_DETAIL_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            <!-- ,USE_LIMIT -->
+            <!-- ,LIMIT_QTY -->
+            ,SOLDOUT_YN
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+            ,VISIBILITY
+        )
+        (
+         SELECT
+          *
+          FROM
+         (
+             SELECT
+                 TO_UID() PRODUCT_STOCK_ID
+                #바로 위에 채번된 대상 <!-- ,PRODUCT_DETAIL_ID -->
+                ,(SELECT 
+                    PRODUCT_DETAIL_ID  
+                   FROM T_PRODUCT_DETAIL 
+                  WHERE HEAD_OFFICE_ID = #{headOfficeId}
+                    AND PRODUCT_ID     = #{productId}
+                    AND FRANCHISE_ID   = #{franchiseId}
+                 ) AS PRODUCT_DETAIL_ID
+                ,PRODUCT_ID
+                ,HEAD_OFFICE_ID
+                ,#{franchiseId} FRANCHISE_ID
+                <!-- ,USE_LIMIT -->
+                <!-- ,LIMIT_QTY -->
+                ,SOLDOUT_YN
+                ,DELETED_YN
+                ,now() CREATED_AT
+                ,#{createdBy} CREATED_BY
+                ,now() UPDATED_AT
+                ,#{updatedBy} UPDATED_BY
+                ,VISIBILITY
+            FROM T_PRODUCT_STOCK
+            WHERE HEAD_OFFICE_ID = #{headOfficeId}
+              AND PRODUCT_ID     = #{productId}
+            <choose>
+                <when test='franchiseId2 != "" and franchiseId2 != null'>
+              AND FRANCHISE_ID   = #{franchiseId2}
+                </when>
+                <otherwise>
+              AND FRANCHISE_ID   = ''  
+                </otherwise>
+            </choose>
+            ) TEMP
+        )
+        ON DUPLICATE KEY UPDATE
+        UPDATED_AT = now()
+       ,UPDATED_BY = #{updatedBy}
+       <!-- ,USE_LIMIT  = TEMP.USE_LIMIT --> 
+       <!-- ,LIMIT_QTY  = TEMP.LIMIT_QTY  -->
+       ,SOLDOUT_YN = TEMP.SOLDOUT_YN
+       ,DELETED_YN = TEMP.DELETED_YN
+       ,VISIBILITY = TEMP.VISIBILITY
+    </update>
+    
+    
+    
+    <update id="productCopyCategoryProduct" parameterType="kjh.common.dto.CamelMap">
+    #2.카테고리 상품 저장 T_CATEGORY_PRODUCT
+    INSERT INTO T_CATEGORY_PRODUCT
+    (
+         CATEGORY_PRODUCT_ID
+        ,CATEGORY_ID
+        ,PRODUCT_ID
+        ,HEAD_OFFICE_ID 
+        ,FRANCHISE_ID        
+        ,PRODUCT_DIVISION
+        ,PRODUCT_SEQ
+        ,DELETED_YN
+        ,CREATED_AT
+        ,CREATED_BY
+        ,UPDATED_AT
+        ,UPDATED_BY
+    )
+    (
+     SELECT
+        *
+        FROM
+        (
+            SELECT
+                 TO_UID() CATEGORY_PRODUCT_ID
+                ,TARGET.CATEGORY_ID
+                ,TEMP.PRODUCT_ID
+                ,TEMP.HEAD_OFFICE_ID
+                ,#{franchiseId} as FRANCHISE_ID
+                ,TEMP.PRODUCT_DIVISION
+                ,TEMP.PRODUCT_SEQ
+                ,TEMP.DELETED_YN
+                ,TEMP.CREATED_AT
+                ,TEMP.CREATED_BY
+                ,TEMP.UPDATED_AT
+                ,TEMP.UPDATED_BY
+                FROM
+                (
+                 SELECT
+                     PRODUCT_ID
+                    ,HEAD_OFFICE_ID 
+                    ,1 PRODUCT_DIVISION
+                    ,0 PRODUCT_SEQ
+                    ,'N' DELETED_YN
+                    ,now() CREATED_AT
+                    ,#{createdBy} CREATED_BY
+                    ,now() UPDATED_AT
+                    ,#{updatedBy} UPDATED_BY
+                     FROM T_PRODUCT
+                 WHERE PRODUCT_ID     = #{productId}
+                   AND HEAD_OFFICE_ID = #{headOfficeId}
+                ) TEMP CROSS JOIN (
+                                   <foreach collection="categoryIdList" item="item" index="index" separator="UNION ALL" >
+                                   SELECT '${item}' AS CATEGORY_ID FROM DUAL
+                                   </foreach>
+                                  ) TARGET
+        ) TEMP
+    )
+    ON DUPLICATE KEY UPDATE
+    UPDATED_AT       = NOW()
+   ,UPDATED_BY       = #{updatedBy}
+   ,PRODUCT_DIVISION = TEMP.PRODUCT_DIVISION
+   ,PRODUCT_SEQ      = TEMP.PRODUCT_SEQ
+   ,DELETED_YN       = TEMP.DELETED_YN
+   ,UPDATED_AT       = TEMP.UPDATED_AT
+   ,UPDATED_BY       = TEMP.UPDATED_BY
+    </update>
+    
+    
+    
+    <update id="productCopyCategorySeq1" parameterType="kjh.common.dto.CamelMap">
+    #3.카테고리 순서 저장 T_CATEGORY_SEQ
+     INSERT INTO T_CATEGORY_SEQ
+     (
+         CATEGORY_SEQ_ID
+        ,CATEGORY_ID
+        ,HEAD_OFFICE_ID
+        ,FRANCHISE_ID
+        ,CATEGORY_SEQ
+        ,DELETED_YN
+        ,CREATED_AT
+        ,CREATED_BY
+        ,UPDATED_AT
+        ,UPDATED_BY
+     )
+     (
+      SELECT
+        *
+        FROM
+        (
+             SELECT 
+                 TO_UID() CATEGORY_SEQ_ID
+                ,CATEGORY_ID
+                ,HEAD_OFFICE_ID
+                ,#{franchiseId} FRANCHISE_ID
+                ,CATEGORY_SEQ
+                ,DELETED_YN
+                ,now() CREATED_AT
+                ,#{createdBy} CREATED_BY
+                ,now() UPDATED_AT
+                ,#{updatedBy} UPDATED_BY
+                 FROM T_CATEGORY_SEQ 
+                WHERE HEAD_OFFICE_ID = #{headOfficeId}
+                <choose>
+                    <when test='franchiseId2 != "" and franchiseId2 != null'>
+                  AND FRANCHISE_ID   = #{franchiseId2}
+                    </when>
+                    <otherwise>
+                  AND FRANCHISE_ID   = ''  
+                    </otherwise>
+                </choose>
+                  AND CATEGORY_ID    IN 
+                                         (
+                                            <foreach collection="categoryIdList" item="item" index="index" separator="UNION ALL" >
+                                            SELECT '${item}' from dual
+                                            </foreach>
+                                         )
+            ) TEMP
+        )
+    ON DUPLICATE KEY UPDATE
+    UPDATED_AT   = now()
+   ,UPDATED_BY   = #{updatedBy}
+   ,CATEGORY_SEQ = TEMP.CATEGORY_SEQ
+   ,DELETED_YN   = TEMP.DELETED_YN  
+   ,CREATED_AT   = TEMP.CREATED_AT  
+   ,CREATED_BY   = TEMP.CREATED_BY  
+   ,UPDATED_AT   = TEMP.UPDATED_AT  
+   ,UPDATED_BY   = TEMP.UPDATED_BY  
+    </update>
+    
+    
+    <update id="productCopyCategorySeq2" parameterType="kjh.common.dto.CamelMap">
+    #4.카테고리 상세 저장 T_CATEGORY_DETAIL
+    INSERT INTO T_CATEGORY_DETAIL
+    (
+         CATEGORY_DETAIL_ID
+        ,CATEGORY_ID
+        ,HEAD_OFFICE_ID
+        ,FRANCHISE_ID
+        ,CHANNEL_TYPE
+        ,CATEGORY_DETAIL
+        ,KR
+        ,EN
+        ,JP
+        ,CN
+        ,VISIBILITY
+        ,PRODUCT_TYPE
+        ,EXTR_CD
+        ,DELETED_YN
+        ,CREATED_AT
+        ,CREATED_BY
+        ,UPDATED_AT
+        ,UPDATED_BY
+        ,VIEW_STATUS_YN
+        ,FILE_ID
+        ,SOUND_KR
+        ,SOUND_EN
+        ,SOUND_JP
+        ,SOUND_CN
+    )
+    (
+     SELECT
+        *
+        FROM
+        (
+         SELECT
+             TO_UID() CATEGORY_DETAIL_ID
+            ,CATEGORY_ID
+            ,HEAD_OFFICE_ID
+            ,#{franchiseId} FRANCHISE_ID
+            ,CHANNEL_TYPE
+            ,CATEGORY_DETAIL
+            ,KR
+            ,EN
+            ,JP
+            ,CN
+            ,VISIBILITY
+            ,PRODUCT_TYPE
+            ,EXTR_CD
+            ,DELETED_YN
+            ,now() CREATED_AT
+            ,#{createdBy} CREATED_BY
+            ,now() UPDATED_AT
+            ,#{updatedBy} UPDATED_BY
+            ,VIEW_STATUS_YN
+            ,FILE_ID
+            ,SOUND_KR
+            ,SOUND_EN
+            ,SOUND_JP
+            ,SOUND_CN
+          FROM T_CATEGORY_DETAIL
+         WHERE HEAD_OFFICE_ID    = #{headOfficeId}
+         <choose>
+             <when test='franchiseId2 != "" and franchiseId2 != null'>
+           AND FRANCHISE_ID   = #{franchiseId2}
+             </when>
+             <otherwise>
+           AND FRANCHISE_ID   = ''  
+             </otherwise>
+         </choose>
+           AND CATEGORY_ID    IN 
+                                  (
+                                    <foreach collection="categoryIdList" item="item" index="index" separator="UNION ALL" >
+                                    SELECT '${item}' FROM DUAL
+                                    </foreach>
+                                  )
+        ) TEMP
+    )
+    ON DUPLICATE KEY UPDATE
+    UPDATED_AT      = now()
+   ,UPDATED_BY      = #{updatedBy}
+   ,CATEGORY_DETAIL = TEMP.CATEGORY_DETAIL 
+   ,KR              = TEMP.KR              
+   ,EN              = TEMP.EN              
+   ,JP              = TEMP.JP              
+   ,CN              = TEMP.CN              
+   ,VISIBILITY      = TEMP.VISIBILITY      
+   ,PRODUCT_TYPE    = TEMP.PRODUCT_TYPE    
+   ,EXTR_CD         = TEMP.EXTR_CD         
+   ,DELETED_YN      = TEMP.DELETED_YN      
+   ,CREATED_AT      = TEMP.CREATED_AT      
+   ,CREATED_BY      = TEMP.CREATED_BY      
+   ,UPDATED_AT      = TEMP.UPDATED_AT      
+   ,UPDATED_BY      = TEMP.UPDATED_BY      
+   ,VIEW_STATUS_YN  = TEMP.VIEW_STATUS_YN  
+   ,CHANNEL_TYPE    = TEMP.CHANNEL_TYPE
+   ,FILE_ID         = TEMP.FILE_ID 
+   ,SOUND_KR        = TEMP.SOUND_KR
+   ,SOUND_EN        = TEMP.SOUND_EN
+   ,SOUND_JP        = TEMP.SOUND_JP
+   ,SOUND_CN        = TEMP.SOUND_CN
+    </update>
+    
+    
+   <update id="productCopyProductOptionGroup" parameterType="HashMap">
+    /*상품옵션 그룹 복사 categoryCopyProductOptionGroup*/
+    INSERT INTO T_PRODUCT_OPTION_GROUP
+    (
+         PRODUCT_OPTION_GROUP_ID
+        ,OPTION_GROUP_ID
+        ,PRODUCT_ID
+        ,HEAD_OFFICE_ID
+        ,FRANCHISE_ID
+        ,OPTION_GROUP_SEQ
+        ,DELETED_YN
+        ,CREATED_AT
+        ,CREATED_BY
+        ,UPDATED_AT
+        ,UPDATED_BY
+    )
+    (
+     SELECT
+        *
+        FROM
+        (
+            SELECT 
+                 TO_UID() PRODUCT_OPTION_GROUP_ID
+                ,TPOG.OPTION_GROUP_ID
+                ,TPOG.PRODUCT_ID
+                ,TPOG.HEAD_OFFICE_ID
+                ,TARGET.FRANCHISE_ID
+                ,TPOG.OPTION_GROUP_SEQ
+                ,TPOG.DELETED_YN
+                ,now() CREATED_AT
+                ,#{updatedBy} CREATED_BY
+                ,now() UPDATED_AT
+                ,#{updatedBy} UPDATED_BY
+             FROM T_PRODUCT_OPTION_GROUP TPOG CROSS JOIN
+                                                         (
+                                                           SELECT   #{franchiseId} as FRANCHISE_ID FROM DUAL 
+                                                         ) TARGET ON 1=1
+                 ,(
+                      SELECT
+                            TEMP.OPTION_GROUP_ID
+                        FROM
+                        (
+                            SELECT OPTION_GROUP_ID FROM T_OPTION_GROUP_PRODUCT
+                            WHERE PRODUCT_ID   = #{productId}
+                            <choose>
+                              <when test="franchiseId2 != null and franchiseId2 != ''">
+                              AND FRANCHISE_ID   = #{franchiseId2}
+                              </when>
+                              <otherwise>
+                              AND FRANCHISE_ID   = ''
+                              </otherwise>
+                            </choose>
+                            UNION ALL
+                            SELECT OPTION_GROUP_ID FROM T_PRODUCT_OPTION_GROUP
+                            WHERE PRODUCT_ID   = #{productId}
+                            <choose>
+                              <when test="franchiseId2 != null and franchiseId2 != ''">
+                              AND FRANCHISE_ID   = #{franchiseId2}
+                              </when>
+                              <otherwise>
+                              AND FRANCHISE_ID   = ''
+                              </otherwise>
+                            </choose>
+                        ) TEMP
+                        GROUP BY TEMP.OPTION_GROUP_ID
+                  ) OPTION_ID_LIST
+                WHERE TPOG.OPTION_GROUP_ID = OPTION_ID_LIST.OPTION_GROUP_ID
+                  AND TPOG.HEAD_OFFICE_ID  = #{headOfficeId} 
+                  <choose>
+                      <when test="franchiseId2 != null and franchiseId2 != ''">
+                  AND TPOG.FRANCHISE_ID    = #{franchiseId2}
+                      </when>
+                      <otherwise>
+                  AND TPOG.FRANCHISE_ID    = ''
+                      </otherwise>
+                  </choose>
+        ) TEMP
+    )
+    ON DUPLICATE KEY UPDATE 
+     UPDATED_AT          = now()
+    ,UPDATED_BY          = #{updatedBy}
+    ,OPTION_GROUP_SEQ    = TEMP.OPTION_GROUP_SEQ  
+    ,DELETED_YN          = TEMP.DELETED_YN        
+    </update>
+    
+    
+    
+    <update id="productCopyOptionGroupProduct" parameterType="HashMap">
+    /*옵션그룹상품 복사 categoryCopyOptionGroupProduct*/
+    INSERT INTO T_OPTION_GROUP_PRODUCT
+    (
+         OPTION_GROUP_PRODUCT_ID
+        ,OPTION_GROUP_ID
+        ,PRODUCT_ID
+        ,HEAD_OFFICE_ID
+        ,FRANCHISE_ID
+        ,OPTION_SEQ
+        ,DEFAULT_SELECTED
+        ,DELETED_YN
+        ,CREATED_AT
+        ,CREATED_BY
+        ,UPDATED_AT
+        ,UPDATED_BY
+    )
+    (
+     SELECT
+        *
+        FROM
+        (
+            SELECT 
+                 to_uid() <!-- PRODUCT_OPTION_GROUP_ID -->
+                ,TOGP.OPTION_GROUP_ID
+                ,TOGP.PRODUCT_ID
+                ,TOGP.HEAD_OFFICE_ID
+                ,TARGET.FRANCHISE_ID
+                ,TOGP.OPTION_SEQ
+                ,TOGP.DEFAULT_SELECTED
+                ,TOGP.DELETED_YN
+                ,now() CREATED_AT
+                ,#{updatedBy} CREATED_BY
+                ,now() UPDATED_AT
+                ,#{updatedBy} UPDATED_BY
+             FROM T_OPTION_GROUP_PRODUCT TOGP CROSS JOIN
+                                                         (
+                                                            SELECT   #{franchiseId} as FRANCHISE_ID FROM DUAL 
+                                                         ) TARGET ON 1=1
+            ,(
+              SELECT
+                    TEMP.OPTION_GROUP_ID
+                FROM
+                (
+                    SELECT OPTION_GROUP_ID FROM T_OPTION_GROUP_PRODUCT
+                    WHERE PRODUCT_ID   = #{productId}
+                    <choose>
+                      <when test="franchiseId2 != null and franchiseId2 != ''">
+                      AND FRANCHISE_ID   = #{franchiseId2}
+                      </when>
+                      <otherwise>
+                      AND FRANCHISE_ID   = ''
+                      </otherwise>
+                    </choose>
+                    UNION ALL
+                    SELECT OPTION_GROUP_ID FROM T_PRODUCT_OPTION_GROUP
+                    WHERE PRODUCT_ID = #{productId}
+                    <choose>
+                      <when test="franchiseId2 != null and franchiseId2 != ''">
+                      AND FRANCHISE_ID   = #{franchiseId2}
+                      </when>
+                      <otherwise>
+                      AND FRANCHISE_ID   = ''
+                      </otherwise>
+                    </choose>
+                ) TEMP
+                GROUP BY TEMP.OPTION_GROUP_ID
+            ) OPTION_ID_LIST
+            WHERE TOGP.OPTION_GROUP_ID = OPTION_ID_LIST.OPTION_GROUP_ID
+              AND TOGP.HEAD_OFFICE_ID  = #{headOfficeId} 
+              <choose>
+                  <when test="franchiseId2 != null and franchiseId2 != ''">
+              AND TOGP.FRANCHISE_ID    = #{franchiseId2}
+                  </when>
+                  <otherwise>
+              AND TOGP.FRANCHISE_ID    = ''
+                  </otherwise>
+              </choose>
+        ) TEMP
+    )
+    ON DUPLICATE KEY UPDATE 
+     UPDATED_AT          = NOW()
+    ,UPDATED_BY          = #{updatedBy}
+    ,OPTION_SEQ          = TEMP.OPTION_SEQ      
+    ,DEFAULT_SELECTED    = TEMP.DEFAULT_SELECTED
+    ,DELETED_YN          = TEMP.DELETED_YN      
+    </update>
+    
+    
+    <update id="productCopyOptionGroupDetail" parameterType="HashMap">
+    /*옵션 그룹 상세 복사 categoryCopyOptionGroupDetail */
+    INSERT INTO T_OPTION_GROUP_DETAIL
+    (
+             OPTION_GROUP_DETAIL_ID
+            ,OPTION_GROUP_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            ,CHANNEL_TYPE
+            ,OPTION_GROUP_DETAIL
+            ,CHOICE_METHOD
+            ,IS_FREE
+            ,BASE_SALE_QTY
+            ,MAX_SALE_QTY
+            ,EXTR_CD
+            ,OPTION_GROUP_NAME_KR
+            ,OPTION_GROUP_NAME_EN
+            ,OPTION_GROUP_NAME_JP
+            ,OPTION_GROUP_NAME_CN
+            ,OPTION_GROUP_NAME_EXP_KR
+            ,OPTION_GROUP_NAME_EXP_EN
+            ,OPTION_GROUP_NAME_EXP_JP
+            ,OPTION_GROUP_NAME_EXP_CN
+            ,FILE_ID
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+            ,VIEW_STATUS_YN
+    )
+    (
+     SELECT
+        *
+        FROM
+        (
+            SELECT 
+                 TO_UID() OPTION_GROUP_DETAIL_ID
+                ,TOG.OPTION_GROUP_ID
+                ,TOG.HEAD_OFFICE_ID
+                ,TARGET.FRANCHISE_ID
+                ,TOG.CHANNEL_TYPE
+                ,TOG.OPTION_GROUP_DETAIL
+                ,TOG.CHOICE_METHOD
+                ,TOG.IS_FREE
+                ,TOG.BASE_SALE_QTY
+                ,TOG.MAX_SALE_QTY
+                ,TOG.EXTR_CD
+                ,TOG.OPTION_GROUP_NAME_KR
+                ,TOG.OPTION_GROUP_NAME_EN
+                ,TOG.OPTION_GROUP_NAME_JP
+                ,TOG.OPTION_GROUP_NAME_CN
+                ,TOG.OPTION_GROUP_NAME_EXP_KR
+                ,TOG.OPTION_GROUP_NAME_EXP_EN
+                ,TOG.OPTION_GROUP_NAME_EXP_JP
+                ,TOG.OPTION_GROUP_NAME_EXP_CN
+                ,TOG.FILE_ID
+                ,TOG.DELETED_YN
+                ,TOG.CREATED_AT
+                ,TOG.CREATED_BY
+                ,TOG.UPDATED_AT
+                ,TOG.UPDATED_BY
+                ,TOG.VIEW_STATUS_YN
+             FROM T_OPTION_GROUP_DETAIL TOG  CROSS JOIN
+                                                    (
+                                                        SELECT   #{franchiseId} as FRANCHISE_ID FROM DUAL 
+                                                    ) TARGET ON 1=1
+                ,(
+                  SELECT
+                        TEMP.OPTION_GROUP_ID
+                    FROM
+                    (
+                        SELECT OPTION_GROUP_ID FROM T_OPTION_GROUP_PRODUCT
+                        WHERE PRODUCT_ID   = #{productId}
+                        <choose>
+                          <when test="franchiseId2 != null and franchiseId2 != ''">
+                          AND FRANCHISE_ID   = #{franchiseId2}
+                          </when>
+                          <otherwise>
+                          AND FRANCHISE_ID   = ''
+                          </otherwise>
+                        </choose>
+                        UNION ALL
+                        SELECT OPTION_GROUP_ID FROM T_PRODUCT_OPTION_GROUP
+                        WHERE PRODUCT_ID   = #{productId}
+                        <choose>
+                          <when test="franchiseId2 != null and franchiseId2 != ''">
+                          AND FRANCHISE_ID   = #{franchiseId2}
+                          </when>
+                          <otherwise>
+                          AND FRANCHISE_ID   = ''
+                          </otherwise>
+                        </choose>
+                    ) TEMP
+                    GROUP BY TEMP.OPTION_GROUP_ID
+                 ) OPTION_ID_LIST
+            WHERE TOG.HEAD_OFFICE_ID = #{headOfficeId} 
+          <choose>
+              <when test="franchiseId2 != null and franchiseId2 != ''">
+              AND TOG.FRANCHISE_ID   = #{franchiseId2}
+              </when>
+              <otherwise>
+              AND TOG.FRANCHISE_ID   = ''
+              </otherwise>
+          </choose>
+              AND OPTION_ID_LIST.OPTION_GROUP_ID = TOG.OPTION_GROUP_ID
+        ) TEMP
+    )
+    ON DUPLICATE KEY UPDATE 
+     UPDATED_AT               = now()
+    ,UPDATED_BY               = #{updatedBy}
+    ,VIEW_STATUS_YN           = TEMP.VIEW_STATUS_YN
+    ,CHOICE_METHOD            = TEMP.CHOICE_METHOD           
+    ,IS_FREE                  = TEMP.IS_FREE                 
+    ,BASE_SALE_QTY            = TEMP.BASE_SALE_QTY           
+    ,MAX_SALE_QTY             = TEMP.MAX_SALE_QTY            
+    ,EXTR_CD                  = TEMP.EXTR_CD                 
+    ,OPTION_GROUP_NAME_KR     = TEMP.OPTION_GROUP_NAME_KR    
+    ,OPTION_GROUP_NAME_EN     = TEMP.OPTION_GROUP_NAME_EN    
+    ,OPTION_GROUP_NAME_JP     = TEMP.OPTION_GROUP_NAME_JP    
+    ,OPTION_GROUP_NAME_CN     = TEMP.OPTION_GROUP_NAME_CN    
+    ,OPTION_GROUP_NAME_EXP_KR = TEMP.OPTION_GROUP_NAME_EXP_KR
+    ,OPTION_GROUP_NAME_EXP_EN = TEMP.OPTION_GROUP_NAME_EXP_EN
+    ,OPTION_GROUP_NAME_EXP_JP = TEMP.OPTION_GROUP_NAME_EXP_JP
+    ,OPTION_GROUP_NAME_EXP_CN = TEMP.OPTION_GROUP_NAME_EXP_CN
+    ,FILE_ID                  = TEMP.FILE_ID                 
+    ,DELETED_YN               = TEMP.DELETED_YN              
+    ,CHANNEL_TYPE             = TEMP.CHANNEL_TYPE
+    </update>
+</mapper>

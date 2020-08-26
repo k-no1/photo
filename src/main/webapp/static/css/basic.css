@@ -1,0 +1,100 @@
+@charset "utf-8";
+
+/*------------------------------------------------------------------------------------------------------------------------------------------
+	File : base.css(Front)
+ 	CSS 적용순서 : 아이디 > 태그와 클래스 > 클래스 > 태그
+	CSS 선택자 선언순서 : Type Selector, Layout Selector, Class Selector, Etc
+	CSS 속성 선언순서 : display, position, float/clear, overflow, width/height, margin/padding, border, background, color/font, align, etc
+--------------------------------------------------------------------------------------------------------------------------------------------*/
+
+*, *:before, *:after {margin:0px; padding:0px; box-sizing:border-box;}
+html, body {
+	height:100%;
+	line-height:1;
+	font-family:"NotoSans-Regular", "Malgun Gothic","Dotum", "Arial", "sans-serif", "serif";
+	color:#787878;
+	-webkit-font-smoothing:antialiased;
+	-webkit-text-size-adjust:none; 
+	-moz-text-size-adjust:none;
+	-ms-text-size-adjust:none;
+}
+html {font-size:14px;}
+hr {display:none;}
+caption {overflow:hidden; height:0px; font-size:0px; line-height:0px;}
+h1, h2, h3, h4, h5, h6 {font:inherit;}
+img {border:none; vertical-align:middle;}
+ol, ul, li, dl, dt, dd {list-style:none;}
+table {width:100%; border:0px; border-spacing:0px; border-collapse:collapse;}
+th, td {border:0px; word-break:break-all;}
+th {font-family:"NotoSans-Regular"; font-weight:normal;}
+td {font-family:"NotoSans-Regular";}
+fieldset {width:100%; border:0px;}
+legend {display:none;}
+frameset {border:0px;}
+iframe {width:100%; border:0px;}
+em, address {font-style:normal;}
+button, input, textarea, select {vertical-align:middle; outline:none;}
+button {overflow:visible; cursor:pointer; border:0px; background-color:transparent; font-family:"NotoSans-Regular";}
+button::-moz-focus-inner {padding:0px;}
+select, input, textarea {font:inherit;}
+sub, sup {position:relative; font-size:75%; line-height:0; vertical-align:baseline;}
+sup {top: -.5em}
+sub {bottom: -.25em}
+button {outline:none;}
+a {text-decoration:none; color:#787878;}
+
+select {appearance:none; -webkit-appearance:none; -moz-appearance:none; -o-appearance:none;}
+select::-ms-expand {display:none;}
+:root select {padding:0px 30px 0px 5px;}
+
+
+/* Font */
+@font-face {
+	font-family:"NotoSans-Thin";
+	font-style:normal;
+	font-weight:100;
+	src:local(※),
+    url('/static/font/NotoSans-Thin.eot?#iefix') format('embedded-opentype'),
+    url('/static/font/NotoSans-Thin.woff') format('woff'),
+    url('/static/font/NotoSans-Thin.otf') format('opentype');
+}
+
+@font-face {
+	font-family:"NotoSans-Light";
+	font-style:normal;
+	font-weight:300;
+	src:local(※),
+    url('/static/font/NotoSans-Light.eot?#iefix') format('embedded-opentype'),
+    url('/static/font/NotoSans-Light.woff') format('woff'),
+    url('/static/font/NotoSans-Light.otf') format('opentype');
+}
+
+@font-face {
+	font-family:"NotoSans-Regular";
+	font-style:normal;
+	font-weight:400;
+	src:local(※),
+    url('/static/font/NotoSans-Regular.eot?#iefix') format('embedded-opentype'),
+    url('/static/font/NotoSans-Regular.woff') format('woff'),
+    url('/static/font/NotoSans-Regular.otf') format('opentype');
+}
+
+@font-face {
+	font-family:"NotoSans-Medium";
+	font-style:normal;
+    font-weight:500;
+    src:local(※),
+    url('/static/font/NotoSans-Medium.eot?#iefix') format('embedded-opentype'),
+    url('/static/font/NotoSans-Medium.woff') format('woff'),
+    url('/static/font/NotoSans-Medium.otf') format('opentype');
+}
+
+@font-face {
+    font-family:"NotoSans-Bold";
+  	font-style:normal;
+    font-weight:700;
+    src:local(※),
+    url('/static/font/NotoSans-Bold.eot?#iefix') format('embedded-opentype'),
+    url('/static/font/NotoSans-Bold.woff') format('woff'),
+    url('/static/font/NotoSans-Bold.otf') format('opentype');
+}

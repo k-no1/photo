@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kjh.asp.product.dao.ProductDetailHeadOfficeDao">
+    <sql id="paging">
+        limit ${offset}, ${limit}
+        <!-- Mytatis offset=0 을  ""로   인식하는 문제로 앞의 로직에서 예외케이스 처리로직 삽입  -->
+    </sql>  
+    
+    <select id="prodcutDetailHeadOfficeSelect" parameterType="kjh.common.dto.CamelMap" resultType="kjh.common.dto.CamelMap">
+    /*prodcutDetailHeadOfficeSelect 전체 기준 본사와 같은,다른 정보 cnt 가 기존 상세조회에서 추가 (기존 상세 쿼리를 유지하고 싶어서 만든쿼리 기존쿼리 에서 franchiseId 조회만 빠짐 )*/
+    SELECT
+            /*T_PRODUCT 정보*/
+            PRODUCT_ID
+           ,HEAD_OFFICE_ID
+           ,PRODUCT_MGR_NAME
+           ,PRODUCT_TYPE
+           ,PRODUCT_SUBJECT
+           ,PRODUCT_OWNER_ID
+           
+           /*T_PRODUCT_DETAIL 정보*/
+           ,IF(FRANCHISE_ID = '', PRODUCT_DETAIL_ID,NULL)                                                      AS PRODUCT_DETAIL_ID
+           ,IF(FRANCHISE_ID = '', PRODUCT_DETAIL   ,NULL)                                                      AS PRODUCT_DETAIL    
+                                                                                                               
+           ,#{productKr}                                                                                       AS PRODUCT_KR    
+           ,SUM(IF(IFNULL(PRODUCT_KR,'')  = IFNULL(#{productKr},''), 1,0))                                     AS PRODUCT_KR_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_KR,'') != IFNULL(#{productKr},''), 1,0))                                     AS PRODUCT_KR_DIFF_SUM
+                                                                                                               
+           ,#{productEn}                                                                                       AS PRODUCT_EN    
+           ,SUM(IF(IFNULL(PRODUCT_EN,'')  = IFNULL(#{productEn},''), 1,0))                                     AS PRODUCT_EN_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_EN,'') != IFNULL(#{productEn},''), 1,0))                                     AS PRODUCT_EN_DIFF_SUM
+                                                                                                               
+           ,#{productJp}                                                                                       AS PRODUCT_JP    
+           ,SUM(IF(IFNULL(PRODUCT_JP,'')  = IFNULL(#{productJp},''), 1,0))                                     AS PRODUCT_JP_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_JP,'') != IFNULL(#{productJp},''), 1,0))                                     AS PRODUCT_JP_DIFF_SUM
+                                                                                                               
+           ,#{productCn}                                                                                       AS PRODUCT_CN    
+           ,SUM(IF(IFNULL(PRODUCT_CN,'')  = IFNULL(#{productCn},''), 1,0))                                     AS PRODUCT_CN_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_CN,'') != IFNULL(#{productCn},''), 1,0))                                     AS PRODUCT_CN_DIFF_SUM
+                                                                                                               
+           ,#{saleStatus}                                                                                      AS SALE_STATUS    
+           ,SUM(IF(IFNULL(SALE_STATUS,'')  = IFNULL(#{saleStatus},''), 1,0))                                   AS SALE_STATUS_SAM_SUM
+           ,SUM(IF(IFNULL(SALE_STATUS,'') != IFNULL(#{saleStatus},''), 1,0))                                   AS SALE_STATUS_DIFF_SUM
+                                                                                                      
+           ,#{visibility}                                                                                      AS VISIBILITY    
+           ,SUM(IF(IFNULL(VISIBILITY,'')  = IFNULL(#{visibility},''), 1,0))                                    AS VISIBILITY_SAM_SUM
+           ,SUM(IF(IFNULL(VISIBILITY,'') != IFNULL(#{visibility},''), 1,0))                                    AS VISIBILITY_DIFF_SUM
+                                                                                                               
+           ,#{salesTarget}                                                                                     AS SALES_TARGET    
+           ,SUM(IF(IFNULL(SALES_TARGET,'')  = IFNULL(#{salesTarget},''), 1,0))                                 AS SALES_TARGET_SAM_SUM
+           ,SUM(IF(IFNULL(SALES_TARGET,'') != IFNULL(#{salesTarget},''), 1,0))                                 AS SALES_TARGET_DIFF_SUM
+                                                                                                               
+           ,#{primeCost}                                                                                       AS PRIME_COST    
+           ,SUM(IF(IFNULL(PRIME_COST,'')  = IFNULL(#{primeCost},''), 1,0))                                     AS PRIME_COST_SAM_SUM
+           ,SUM(IF(IFNULL(PRIME_COST,'') != IFNULL(#{primeCost},''), 1,0))                                     AS PRIME_COST_DIFF_SUM
+                                                                                                               
+           ,#{price}                                                                                           AS PRICE    
+           ,SUM(IF(IFNULL(PRICE,'')  = IFNULL(#{price},''), 1,0))                                              AS PRICE_SAM_SUM
+           ,SUM(IF(IFNULL(PRICE,'') != IFNULL(#{price},''), 1,0))                                              AS PRICE_DIFF_SUM
+                                                                                                               
+           ,#{isStore}                                                                                         AS IS_STORE    
+           ,SUM(IF(IFNULL(IS_STORE,'')  = IFNULL(#{isStore},''), 1,0))                                         AS IS_STORE_SAM_SUM
+           ,SUM(IF(IFNULL(IS_STORE,'') != IFNULL(#{isStore},''), 1,0))                                         AS IS_STORE_DIFF_SUM
+                                                                                                               
+           ,#{storePrice}                                                                                      AS STORE_PRICE    
+           ,SUM(IF(IFNULL(STORE_PRICE,'')  = IFNULL(#{storePrice},''), 1,0))                                   AS STORE_PRICE_SAM_SUM
+           ,SUM(IF(IFNULL(STORE_PRICE,'') != IFNULL(#{storePrice},''), 1,0))                                   AS STORE_PRICE_DIFF_SUM
+                                                                                                               
+           ,#{isPacking}                                                                                       AS IS_PACKING    
+           ,SUM(IF(IFNULL(IS_PACKING,'')  = IFNULL(#{isPacking},''), 1,0))                                     AS IS_PACKING_SAM_SUM
+           ,SUM(IF(IFNULL(IS_PACKING,'') != IFNULL(#{isPacking},''), 1,0))                                     AS IS_PACKING_DIFF_SUM
+                                                                                                               
+           ,#{packingPrice}                                                                                    AS PACKING_PRICE    
+           ,SUM(IF(IFNULL(PACKING_PRICE,'')  = IFNULL(#{packingPrice},''), 1,0))                               AS PACKING_PRICE_SAM_SUM
+           ,SUM(IF(IFNULL(PACKING_PRICE,'') != IFNULL(#{packingPrice},''), 1,0))                               AS PACKING_PRICE_DIFF_SUM
+                                                                                                               
+           ,#{baseSaleQty}                                                                                     AS BASE_SALE_QTY    
+           ,SUM(IF(IFNULL(BASE_SALE_QTY,'')  = IFNULL(#{baseSaleQty},''), 1,0))                                AS BASE_SALE_QTY_SAM_SUM
+           ,SUM(IF(IFNULL(BASE_SALE_QTY,'') != IFNULL(#{baseSaleQty},''), 1,0))                                AS BASE_SALE_QTY_DIFF_SUM
+                                                                                                               
+           ,#{maxSaleQty}                                                                                      AS MAX_SALE_QTY    
+           ,SUM(IF(IFNULL(MAX_SALE_QTY,'')  = IFNULL(#{maxSaleQty},''), 1,0))                                  AS MAX_SALE_QTY_SAM_SUM
+           ,SUM(IF(IFNULL(MAX_SALE_QTY,'') != IFNULL(#{maxSaleQty},''), 1,0))                                  AS MAX_SALE_QTY_DIFF_SUM
+           
+           ,#{outputQty}                                                                                       AS OUTPUT_QTY    
+           ,SUM(IF(IFNULL(OUTPUT_QTY,'')    = IFNULL(#{outputQty},''), 1,0))                                   AS OUTPUT_QTY_SAM_SUM
+           ,SUM(IF(IFNULL(OUTPUT_QTY,'')   != IFNULL(#{outputQty},''), 1,0))                                   AS OUTPUT_QTY_DIFF_SUM
+
+           ,#{useTax}                                                                                          AS USE_TAX    
+           ,SUM(IF(USE_TAX  = IFNULL(#{useTax},''), 1,0))                                                      AS USE_TAX_SAM_SUM
+           ,SUM(IF(USE_TAX != IFNULL(#{useTax},''), 1,0))                                                      AS USE_TAX_DIFF_SUM     
+                                                                                                               
+           ,#{textBackgroundStyle}                                                                             AS TEXT_BACKGROUND_STYLE    
+           ,SUM(IF(IFNULL(TEXT_BACKGROUND_STYLE,'')  = IFNULL(#{textBackgroundStyle},''), 1,0))                AS TEXT_BACKGROUND_STYLE_SAM_SUM
+           ,SUM(IF(IFNULL(TEXT_BACKGROUND_STYLE,'') != IFNULL(#{textBackgroundStyle},''), 1,0))                AS TEXT_BACKGROUND_STYLE_DIFF_SUM     
+                                                                                                               
+           ,#{textFontSize}                                                                                    AS TEXT_FONT_SIZE    
+           ,SUM(IF(IFNULL(TEXT_FONT_SIZE,'')  = IFNULL(#{textFontSize},''), 1,0))                              AS TEXT_FONT_SIZE_SAM_SUM
+           ,SUM(IF(IFNULL(TEXT_FONT_SIZE,'') != IFNULL(#{textFontSize},''), 1,0))                              AS TEXT_FONT_SIZE_DIFF_SUM                 
+                                                                                                               
+           ,#{textFontColor}                                                                                   AS TEXT_FONT_COLOR    
+           ,SUM(IF(IFNULL(TEXT_FONT_COLOR,'')  = IFNULL(#{textFontColor},''), 1,0))                            AS TEXT_FONT_COLOR_SAM_SUM
+           ,SUM(IF(IFNULL(TEXT_FONT_COLOR,'') != IFNULL(#{textFontColor},''), 1,0))                            AS TEXT_FONT_COLOR_DIFF_SUM                 
+                                                                                                               
+           ,#{fileId}                                                                                          AS FILE_ID    
+           ,SUM(IF(IFNULL(FILE_ID,'')  = IFNULL(#{fileId},''), 1,0))                                           AS FILE_ID_SAM_SUM
+           ,SUM(IF(IFNULL(FILE_ID,'') != IFNULL(#{fileId},''), 1,0))                                           AS FILE_ID_DIFF_SUM                 
+                                                                                                               
+           ,CONCAT(#{imgUrl},#{fileId})                                                                        AS REAL_FILE_PATH    
+                                                                                                               
+           ,TO_FILE_ORINAME(#{fileId})                                                                         AS ORI_FILE_NAME    
+                                                                                                               
+           ,#{productExpKr}                                                                                    AS PRODUCT_EXP_KR    
+           ,SUM(IF(IFNULL(PRODUCT_EXP_KR,'')  = IFNULL(#{productExpKr},''), 1,0))                              AS PRODUCT_EXP_KR_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_EXP_KR,'') != IFNULL(#{productExpKr},''), 1,0))                              AS PRODUCT_EXP_KR_DIFF_SUM                 
+                                                                                                               
+           ,#{productExpEn}                                                                                    AS PRODUCT_EXP_EN    
+           ,SUM(IF(IFNULL(PRODUCT_EXP_EN,'')  = IFNULL(#{productExpEn},''), 1,0))                              AS PRODUCT_EXP_EN_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_EXP_EN,'') != IFNULL(#{productExpEn},''), 1,0))                              AS PRODUCT_EXP_EN_DIFF_SUM
+                                                                                                               
+           ,#{productExpJp}                                                                                    AS PRODUCT_EXP_JP    
+           ,SUM(IF(IFNULL(PRODUCT_EXP_JP,'')  = IFNULL(#{productExpJp},''), 1,0))                              AS PRODUCT_EXP_JP_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_EXP_JP,'') != IFNULL(#{productExpJp},''), 1,0))                              AS PRODUCT_EXP_JP_DIFF_SUM                 
+                                                                                                               
+           ,#{productExpCn}                                                                                    AS PRODUCT_EXP_CN    
+           ,SUM(IF(IFNULL(PRODUCT_EXP_CN,'')  = IFNULL(#{productExpCn},''), 1,0))                              AS PRODUCT_EXP_CN_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_EXP_CN,'') != IFNULL(#{productExpCn},''), 1,0))                              AS PRODUCT_EXP_CN_DIFF_SUM                 
+                                                                                                               
+           ,#{couponCd}                                                                                        AS COUPON_CD    
+           ,SUM(IF(IFNULL(COUPON_CD,'')  = IFNULL(#{couponCd},''), 1,0))                                       AS COUPON_CD_SAM_SUM
+           ,SUM(IF(IFNULL(COUPON_CD,'') != IFNULL(#{couponCd},''), 1,0))                                       AS COUPON_CD_DIFF_SUM                 
+                                                                                                               
+           ,#{barcodeCd}                                                                                       AS BARCODE_CD    
+           ,SUM(IF(IFNULL(BARCODE_CD,'')  = IFNULL(#{barcodeCd},''), 1,0))                                     AS BARCODE_CD_SAM_SUM
+           ,SUM(IF(IFNULL(BARCODE_CD,'') != IFNULL(#{barcodeCd},''), 1,0))                                     AS BARCODE_CD_DIFF_SUM                 
+                                                                                                               
+           ,#{extrCd}                                                                                          AS EXTR_CD    
+           ,SUM(IF(IFNULL(EXTR_CD,'')  = IFNULL(#{extrCd},''), 1,0))                                           AS EXTR_CD_SAM_SUM
+           ,SUM(IF(IFNULL(EXTR_CD,'') != IFNULL(#{extrCd},''), 1,0))                                           AS EXTR_CD_DIFF_SUM                 
+                                                                                                               
+           ,#{extr2Cd}                                                                                         AS EXTR2_CD    
+           ,SUM(IF(IFNULL(EXTR2_CD,'')  = IFNULL(#{extr2Cd},''), 1,0))                                         AS EXTR2_CD_SAM_SUM
+           ,SUM(IF(IFNULL(EXTR2_CD,'') != IFNULL(#{extr2Cd},''), 1,0))                                         AS EXTR2_CD_DIFF_SUM                 
+                                                                                                               
+           ,#{extr3Cd}                                                                                         AS EXTR3_CD    
+           ,SUM(IF(IFNULL(EXTR3_CD,'')  = IFNULL(#{extr3Cd},''), 1,0))                                         AS EXTR3_CD_SAM_SUM
+           ,SUM(IF(IFNULL(EXTR3_CD,'') != IFNULL(#{extr3Cd},''), 1,0))                                         AS EXTR3_CD_DIFF_SUM                 
+                                                                                                               
+           ,#{touchingUse}                                                                                     AS TOUCHING_USE    
+           ,SUM(IF(IFNULL(TOUCHING_USE,'')  = IFNULL(#{touchingUse},''), 1,0))                                 AS TOUCHING_USE_SAM_SUM
+           ,SUM(IF(IFNULL(TOUCHING_USE,'') != IFNULL(#{touchingUse},''), 1,0))                                 AS TOUCHING_USE_DIFF_SUM                 
+                                                                                                               
+           ,#{touchingSave}                                                                                    AS TOUCHING_SAVE    
+           ,SUM(IF(IFNULL(TOUCHING_SAVE,'')  = IFNULL(#{touchingSave},''), 1,0))                               AS TOUCHING_SAVE_SAM_SUM
+           ,SUM(IF(IFNULL(TOUCHING_SAVE,'') != IFNULL(#{touchingSave},''), 1,0))                               AS TOUCHING_SAVE_DIFF_SUM           
+                                                                                                               
+           ,#{dangolUse}                                                                                       AS DANGOL_USE    
+           ,SUM(IF(IFNULL(DANGOL_USE,'')  = IFNULL(#{dangolUse},''), 1,0))                                     AS DANGOL_USE_SAM_SUM
+           ,SUM(IF(IFNULL(DANGOL_USE,'') != IFNULL(#{dangolUse},''), 1,0))                                     AS DANGOL_USE_DIFF_SUM                       
+                                                                                                               
+           ,#{dangolSave}                                                                                      AS DANGOL_SAVE    
+           ,SUM(IF(IFNULL(DANGOL_SAVE,'')  = IFNULL(#{dangolSave},''), 1,0))                                   AS DANGOL_SAVE_SAM_SUM
+           ,SUM(IF(IFNULL(DANGOL_SAVE,'') != IFNULL(#{dangolSave},''), 1,0))                                   AS DANGOL_SAVE_DIFF_SUM
+           
+           ,#{pointUse             }                                                                           AS POINT_USE
+           ,SUM(IF(IFNULL(POINT_USE,'')  = IFNULL(#{pointUse},''), 1,0))                                       AS POINT_USE_SAM_SUM
+           ,SUM(IF(IFNULL(POINT_USE,'') != IFNULL(#{pointUse},''), 1,0))                                       AS POINT_USE_DIFF_SUM
+                                      
+           ,#{pointSave            }                                                                           AS POINT_SAVE
+           ,SUM(IF(IFNULL(POINT_SAVE,'')  = IFNULL(#{pointSave},''), 1,0))                                     AS POINT_SAVE_SAM_SUM
+           ,SUM(IF(IFNULL(POINT_SAVE,'') != IFNULL(#{pointSave},''), 1,0))                                     AS POINT_SAVE_DIFF_SUM
+           
+           ,#{productTags}                                                                                     AS PRODUCT_TAGS    
+           ,SUM(IF(IFNULL(PRODUCT_TAGS,'')  = IFNULL(#{productTags},''), 1,0))                                 AS PRODUCT_TAGS_SAM_SUM
+           ,SUM(IF(IFNULL(PRODUCT_TAGS,'') != IFNULL(#{productTags},''), 1,0))                                 AS PRODUCT_TAGS_DIFF_SUM                       
+                                                                                                               
+           ,#{productPrintName}                                                                                AS PRODUCT_PRINT_NAME    
+           ,SUM(IF(PRODUCT_PRINT_NAME  = #{productPrintName}, 1,0))                                            AS PRODUCT_PRINT_NAME_SAM_SUM
+           ,SUM(IF(PRODUCT_PRINT_NAME != #{productPrintName}, 1,0))                                            AS PRODUCT_PRINT_NAME_DIFF_SUM                       
+                                                                                                               
+           ,#{exchangePrintQty}                                                                                AS EXCHANGE_PRINT_QTY    
+           ,SUM(IF(EXCHANGE_PRINT_QTY  = #{exchangePrintQty}, 1,0))                                            AS EXCHANGE_PRINT_QTY_SAM_SUM
+           ,SUM(IF(EXCHANGE_PRINT_QTY != #{exchangePrintQty}, 1,0))                                            AS EXCHANGE_PRINT_QTY_DIFF_SUM                       
+           
+           ,IF(FRANCHISE_ID = '', DATE_FORMAT(CREATED_AT, '%Y-%m-%d %H:%i:%s:%s'),NULL)                        AS CREATED_AT    
+           
+           ,#{createdBy}                                                                                       AS CREATED_BY    
+           ,#{updatedBy}                                                                                       AS UPDATED_BY    
+           ,#{updatedAt}                                                                                       AS UPDATED_AT    
+                                                                                                               
+           ,#{createdBy}                                                                                       AS CREATED_BY_NAME
+           ,#{updatedBy}                                                                                       AS UPDATED_BY_NAME
+                                                                                                               
+           ,#{categoryId}                                                                                      AS CATEGORY_ID    
+           ,SUM(IF(IFNULL(CATEGORY_ID,'')  = IFNULL(#{categoryId},''), 1,0))                                   AS CATEGORY_ID_SAM_SUM
+           ,SUM(IF(IFNULL(CATEGORY_ID,'') != IFNULL(#{categoryId},''), 1,0))                                   AS CATEGORY_ID_DIFF_SUM       
+                                                                                                               
+           ,#{categoryMgrName}                                                                                 AS CATEGORY_MGR_NAME    
+           ,SUM(IF(IFNULL(CATEGORY_MGR_NAME,'')  = IFNULL(#{categoryMgrName},''), 1,0))                        AS CATEGORY_MGR_NAME_SAM_SUM
+           ,SUM(IF(IFNULL(CATEGORY_MGR_NAME,'') != IFNULL(#{categoryMgrName},''), 1,0))                        AS CATEGORY_MGR_NAME_DIFF_SUM    
+                                                                                                               
+           ,#{optionGroupId}                                                                                   AS OPTION_GROUP_ID    
+           ,SUM(IF(IFNULL(OPTION_GROUP_ID,'')  = IFNULL(#{optionGroupId},''), 1,0))                            AS OPTION_GROUP_ID_SAM_SUM
+           ,SUM(IF(IFNULL(OPTION_GROUP_ID,'') != IFNULL(#{optionGroupId},''), 1,0))                            AS OPTION_GROUP_ID_DIFF_SUM   
+                                                                                                               
+           ,#{optionGroupMgrName}                                                                              AS OPTION_GROUP_MGR_NAME    
+           ,SUM(IF(IFNULL(OPTION_GROUP_MGR_NAME,'')  = IFNULL(#{optionGroupMgrName},''), 1,0))                 AS OPTION_GROUP_MGR_NAME_SAM_SUM
+           ,SUM(IF(IFNULL(OPTION_GROUP_MGR_NAME,'') != IFNULL(#{optionGroupMgrName},''), 1,0))                 AS OPTION_GROUP_MGR_NAME_DIFF_SUM   
+                                                                                                               
+           ,#{useLimit}                                                                                        AS USE_LIMIT    
+           ,SUM(IF(IFNULL(USE_LIMIT,'')  = IFNULL(#{useLimit},''), 1,0))                                       AS USE_LIMIT_SAM_SUM
+           ,SUM(IF(IFNULL(USE_LIMIT,'') != IFNULL(#{useLimit},''), 1,0))                                       AS USE_LIMIT_DIFF_SUM   
+                                                                                                               
+           ,#{soldoutYn}                                                                                       AS SOLDOUT_YN    
+           ,SUM(IF(IFNULL(SOLDOUT_YN,'')  = IFNULL(#{soldoutYn},''), 1,0))                                     AS SOLDOUT_YN_SAM_SUM
+           ,SUM(IF(IFNULL(SOLDOUT_YN,'') != IFNULL(#{soldoutYn},''), 1,0))                                     AS SOLDOUT_YN_DIFF_SUM   
+                                                                                                               
+           ,#{limitQty}                                                                                        AS LIMIT_QTY    
+           ,SUM(IF(IFNULL(LIMIT_QTY,'')  = IFNULL(#{limitQty},''), 1,0))                                       AS LIMIT_QTY_SAM_SUM
+           ,SUM(IF(IFNULL(LIMIT_QTY,'') != IFNULL(#{limitQty},''), 1,0))                                       AS LIMIT_QTY_DIFF_SUM   
+           
+           ,IFNULL(CONCAT(#{itrPrint},#{etrPrint}),'')                                                         AS PRINT
+           ,SUM(IF(IFNULL(CONCAT(ITR_PRINT,ETR_PRINT),'')  = IFNULL(CONCAT(#{itrPrint},#{etrPrint}),''), 1,0)) AS PRINT_SAM_SUM
+           ,SUM(IF(IFNULL(CONCAT(ITR_PRINT,ETR_PRINT),'') != IFNULL(CONCAT(#{itrPrint},#{etrPrint}),''), 1,0)) AS PRINT_DIFF_SUM
+           
+           ,#{soundKr}                                                                                         AS SOUND_KR
+           ,SUM(IF(IFNULL(SOUND_KR,'')  = IFNULL(#{soundKr},''), 1,0))                                         AS SOUND_KR_SAM_SUM
+           ,SUM(IF(IFNULL(SOUND_KR,'') != IFNULL(#{soundKr},''), 1,0))                                         AS SOUND_KR_DIFF_SUM
+           
+           ,#{soundEn}                                                                                         AS SOUND_EN
+           ,SUM(IF(IFNULL(SOUND_EN,'')  = IFNULL(#{soundEn},''), 1,0))                                         AS SOUND_EN_SAM_SUM
+           ,SUM(IF(IFNULL(SOUND_EN,'') != IFNULL(#{soundEn},''), 1,0))                                         AS SOUND_EN_DIFF_SUM
+           
+           ,#{soundJp}                                                                                         AS SOUND_JP
+           ,SUM(IF(IFNULL(SOUND_JP,'')  = IFNULL(#{soundJp},''), 1,0))                                         AS SOUND_JP_SAM_SUM
+           ,SUM(IF(IFNULL(SOUND_JP,'') != IFNULL(#{soundJp},''), 1,0))                                         AS SOUND_JP_DIFF_SUM
+           
+           ,#{soundCn}                                                                                         AS SOUND_CN
+           ,SUM(IF(IFNULL(SOUND_CN,'')  = IFNULL(#{soundCn},''), 1,0))                                         AS SOUND_CN_SAM_SUM
+           ,SUM(IF(IFNULL(SOUND_CN,'') != IFNULL(#{soundCn},''), 1,0))                                         AS SOUND_CN_DIFF_SUM
+       FROM
+       (
+           /* PRODUCT_ID 상품상세 전체정보*/
+           SELECT 
+                        TP.PRODUCT_ID
+                       ,TP.HEAD_OFFICE_ID                                  
+                       ,TP.PRODUCT_MGR_NAME                                
+                       ,TP.PRODUCT_TYPE                                    
+                       ,TP.PRODUCT_SUBJECT                                 
+                       ,TP.PRODUCT_OWNER_ID                                
+                       ,TPD.PRODUCT_DETAIL_ID                              
+                       ,TPD.FRANCHISE_ID                                   
+                       ,TPD.PRODUCT_DETAIL                                 
+                       ,TPD.PRODUCT_KR                                     
+                       ,TPD.PRODUCT_EN                                     
+                       ,TPD.PRODUCT_JP                                     
+                       ,TPD.PRODUCT_CN                                     
+                       ,TPD.SALE_STATUS                                    
+                       ,PS.VISIBILITY                                     
+                       ,TPD.SALES_TARGET                                   
+                       ,TPD.PRIME_COST                                     
+                       ,TPD.PRICE   
+                       ,TPD.IS_STORE
+                       ,TPD.STORE_PRICE                                    
+                       ,TPD.IS_PACKING                                     
+                       ,TPD.PACKING_PRICE                                  
+                       ,TPD.BASE_SALE_QTY                                  
+                       ,TPD.MAX_SALE_QTY                                   
+                       ,TPD.OUTPUT_QTY
+                       ,TPD.USE_TAX 
+                       ,TPD.TEXT_BACKGROUND_STYLE                          
+                       ,TPD.TEXT_FONT_SIZE                                 
+                       ,TPD.TEXT_FONT_COLOR                                
+                       ,TPD.FILE_ID
+                       ,CONCAT(#{imgUrl},TPD.FILE_ID) AS REAL_FILE_PATH
+                       ,TO_FILE_ORINAME(TPD.FILE_ID)  AS ORI_FILE_NAME 
+                       ,TPD.PRODUCT_EXP_KR                                 
+                       ,TPD.PRODUCT_EXP_EN                                 
+                       ,TPD.PRODUCT_EXP_JP                                 
+                       ,TPD.PRODUCT_EXP_CN                                 
+                       ,TPD.COUPON_CD                                      
+                       ,TPD.BARCODE_CD                                     
+                       ,TPD.EXTR_CD 
+                       ,TPD.EXTR2_CD
+                       ,TPD.EXTR3_CD
+                       ,TPD.TOUCHING_USE                                   
+                       ,TPD.TOUCHING_SAVE                                  
+                       ,TPD.DANGOL_USE                                     
+                       ,TPD.DANGOL_SAVE                                    
+                       ,TPD.POINT_USE
+                       ,TPD.POINT_SAVE
+                       ,TPD.PRODUCT_TAGS                                   
+                       ,TPD.PRODUCT_PRINT_NAME                             
+                       ,TPD.EXCHANGE_PRINT_QTY                      
+                       ,DATE_FORMAT(TPD.CREATED_AT, '%Y-%m-%d %H:%i:%s:%s') as CREATED_AT
+                       ,TPD.CREATED_BY                                     
+                       ,TPD.UPDATED_BY                              
+                       ,DATE_FORMAT(TPD.UPDATED_AT, '%Y-%m-%d %H:%i:%s:%s') as UPDATED_AT
+                       ,(TPD.CREATED_BY) AS CREATED_BY_NAME
+                       ,(TPD.UPDATED_BY) AS UPDATED_BY_NAME
+                       ,CT_TXT.CATEGORY_ID
+                       ,CT_TXT.CATEGORY_MGR_NAME
+                       ,OG_TXT.OPTION_GROUP_ID
+                       ,OG_TXT.OPTION_GROUP_MGR_NAME
+                       ,PS.USE_LIMIT
+                       ,PS.SOLDOUT_YN
+                       ,PS.LIMIT_QTY
+                       ,PRINT.ETR_PRINT
+                       ,PRINT.ITR_PRINT
+                       ,PRINT.PRINT_ID
+                       ,TPD.SOUND_KR
+                       ,TPD.SOUND_EN
+                       ,TPD.SOUND_JP
+                       ,TPD.SOUND_CN
+                   FROM  T_PRODUCT        TP              JOIN  T_PRODUCT_DETAIL TPD    ON  TP.PRODUCT_ID       = TPD.PRODUCT_ID
+                                                                                        AND TP.HEAD_OFFICE_ID   = TPD.HEAD_OFFICE_ID
+                                                                                        
+                                                          JOIN  T_FRANCHISE       TF    ON  TPD.HEAD_OFFICE_ID  = TF.HEAD_OFFICE_ID
+                                                                                        AND TPD.FRANCHISE_ID    = TF.FRANCHISE_ID
+                                                                                        AND TF.DELETED_YN       = 'N'
+                                                                                        AND TF.USE_YN           = 'Y'
+
+                                               LEFT OUTER JOIN  T_PRINT          PRINT  ON  TPD.PRODUCT_ID      = PRINT.TARGET_ID
+                                                                                        AND TPD.HEAD_OFFICE_ID  = PRINT.HEAD_OFFICE_ID
+                                                                                        AND TPD.FRANCHISE_ID    = PRINT.FRANCHISE_ID
+                                                                                        AND PRINT.TARGET_TYPE   = 'P'
+                                                                                        
+                                               LEFT OUTER JOIN
+                                                                (
+                                                                   SELECT 
+                                                                       GROUP_CONCAT(DISTINCT C.CATEGORY_ID ORDER BY CATEGORY_MGR_NAME)        AS CATEGORY_ID
+                                                                      ,GROUP_CONCAT(DISTINCT C.CATEGORY_MGR_NAME ORDER BY CATEGORY_MGR_NAME)  AS CATEGORY_MGR_NAME
+                                                                      ,CP.PRODUCT_ID
+                                                                      ,CP.FRANCHISE_ID
+                                                                   FROM T_CATEGORY C JOIN T_CATEGORY_PRODUCT CP ON  C.HEAD_OFFICE_ID = CP.HEAD_OFFICE_ID
+                                                                                                                AND C.CATEGORY_ID    = CP.CATEGORY_ID
+                                                                   WHERE CP.DELETED_YN     = 'N'
+                                                                     AND C.DELETED_YN      = 'N'
+                                                                     AND CP.PRODUCT_ID     = #{productId}
+                                                                     AND CP.HEAD_OFFICE_ID = #{headOfficeId}
+                                                                     AND CP.FRANCHISE_ID  != ''
+                                                                   GROUP BY PRODUCT_ID,CP.FRANCHISE_ID
+                                                                ) CT_TXT ON  TPD.PRODUCT_ID      = CT_TXT.PRODUCT_ID 
+                                                                         AND CT_TXT.FRANCHISE_ID = TPD.FRANCHISE_ID
+                                                                         
+                                               LEFT OUTER JOIN
+                                                                (
+                                                                 SELECT 
+                                                                     GROUP_CONCAT(DISTINCT O.OPTION_GROUP_ID, '/', PO.OPTION_GROUP_SEQ ORDER BY PO.OPTION_GROUP_SEQ) AS OPTION_GROUP_ID
+                                                                    ,GROUP_CONCAT(DISTINCT O.OPTION_GROUP_MGR_NAME ORDER BY PO.OPTION_GROUP_SEQ)                     AS OPTION_GROUP_MGR_NAME
+                                                                    ,PO.PRODUCT_ID
+                                                                    ,PO.FRANCHISE_ID
+                                                                 FROM T_OPTION_GROUP O JOIN T_PRODUCT_OPTION_GROUP PO ON  O.HEAD_OFFICE_ID  = PO.HEAD_OFFICE_ID
+                                                                                                                      AND O.OPTION_GROUP_ID = PO.OPTION_GROUP_ID
+                                                                 WHERE O.DELETED_YN     = 'N'
+                                                                   AND PO.DELETED_YN    = 'N'
+                                                                   AND PO.PRODUCT_ID    = #{productId}
+                                                                   AND O.HEAD_OFFICE_ID = #{headOfficeId}
+                                                                   AND PO.FRANCHISE_ID != ''
+                                                                 GROUP BY PRODUCT_ID,FRANCHISE_ID
+                                                               ) OG_TXT ON  TPD.PRODUCT_ID   = OG_TXT.PRODUCT_ID
+                                                                        AND TPD.FRANCHISE_ID = OG_TXT.FRANCHISE_ID
+                             
+                                               LEFT OUTER JOIN T_PRODUCT_STOCK PS ON  TPD.HEAD_OFFICE_ID    = PS.HEAD_OFFICE_ID
+                                                                                  AND TPD.FRANCHISE_ID      = PS.FRANCHISE_ID
+                                                                                  AND TPD.PRODUCT_ID        = PS.PRODUCT_ID
+                                                                                  AND TPD.PRODUCT_DETAIL_ID = PS.PRODUCT_DETAIL_ID
+
+                   WHERE TP.DELETED_YN      = 'N'
+                     AND TPD.DELETED_YN     = 'N'
+                     AND PS.DELETED_YN      = 'N'
+                     AND TP.PRODUCT_ID      = #{productId}
+                     AND TPD.HEAD_OFFICE_ID = #{headOfficeId}
+                     AND TPD.FRANCHISE_ID  != ''
+       ) DATA
+    GROUP BY
+             PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,PRODUCT_MGR_NAME
+            ,PRODUCT_TYPE
+            ,PRODUCT_SUBJECT
+            ,PRODUCT_OWNER_ID
+    </select>
+    
+    <select id="updateTargetFranchiseSelect" parameterType="kjh.common.dto.CamelMap" resultType="kjh.common.dto.CamelMap">
+    /*updateTargetFranchiseSelect */
+    SELECT 
+           TPD.FRANCHISE_ID
+          ,TF.FRANCHISE_NAME
+          ,CONCAT(${columnName},'')                  AS VALUE
+          ,COUNT(*) OVER(PARTITION BY ${columnName}) AS ROWCOUNT
+        FROM T_PRODUCT_DETAIL TPD
+           , T_FRANCHISE      TF
+           , T_PRODUCT_STOCK  TPS
+    WHERE TPD.FRANCHISE_ID      = TF.FRANCHISE_ID
+      AND TPD.FRANCHISE_ID      = TPS.FRANCHISE_ID
+      AND TPD.FRANCHISE_ID      = TPS.FRANCHISE_ID
+      AND TPD.HEAD_OFFICE_ID    = TPS.HEAD_OFFICE_ID
+      AND TPD.PRODUCT_DETAIL_ID = TPS.PRODUCT_DETAIL_ID
+      AND TPD.PRODUCT_ID        = TPS.PRODUCT_ID
+      AND TPD.DELETED_YN        = 'N'
+      AND TPD.VIEW_STATUS_YN    = 'Y'
+      AND TPS.DELETED_YN        = 'N'
+      AND TF.DELETED_YN         = 'N'
+      AND TF.USE_YN             = 'Y'
+      AND TPD.PRODUCT_ID        = #{productId}
+      AND TF.HEAD_OFFICE_ID     = #{headOfficeId}
+      <choose>
+       <when test='chk == "sam"'>
+      AND REPLACE(IFNULL(${tablePreFix}.${columnName},''),'#ffffff','')  = REPLACE(IFNULL(#{selectValue},''),'#ffffff','')
+       </when>
+       <otherwise>
+      AND REPLACE(IFNULL(${tablePreFix}.${columnName},''),'#ffffff','') != REPLACE(IFNULL(#{selectValue},''),'#ffffff','')
+       </otherwise>
+      </choose>
+      AND TF.FRANCHISE_ID                         != ''
+    ORDER BY VALUE
+    </select>
+    
+    
+    <select id="productTableColumnSearch" parameterType="kjh.common.dto.CamelMap" resultType="kjh.common.dto.CamelMap">
+    /*productTableColumnSearch 상품 테이블 컬럼 조회 */
+    SELECT 
+        ORDINAL_POSITION
+       ,TABLE_NAME
+       ,COLUMN_NAME 
+     FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = schema() 
+      AND TABLE_NAME  IN ('T_PRODUCT_DETAIL','T_PRODUCT_STOCK')
+      AND REPLACE(UPPER(COLUMN_NAME),'_','') = UPPER(#{selectColumn})
+    </select>
+    
+    <update id="productHeadOfficeProductTypeUpdate" parameterType="kjh.common.dto.CamelMap">
+    /*productHeadOfficeProductTypeUpdate 상품 본사(상세) 상품구분 수정*/
+    UPDATE T_PRODUCT SET
+        PRODUCT_TYPE = #{productType}
+       ,UPDATED_BY    = #{updatedBy}
+       ,UPDATED_AT    = now()
+    WHERE PRODUCT_ID     = #{productId}
+      AND HEAD_OFFICE_ID = #{headOfficeId}
+    </update>
+    
+    <update id="productHeadOfficeCommonUpdate" parameterType="kjh.common.dto.CamelMap">
+    /*productHeadOfficeCommonUpdate 상품 본사(상세) 수정 공통 update*/
+    UPDATE ${tableName} SET
+        ${columnName} = #{changeValue}
+       ,UPDATED_BY    = #{updatedBy}
+       ,UPDATED_AT    = now()
+    WHERE PRODUCT_ID     = #{productId} 
+      AND HEAD_OFFICE_ID = #{headOfficeId}
+      AND FRANCHISE_ID   IN (
+                             <choose>
+                                <when test='processType == "H"'>
+                                /*처리기준 - 본사*/
+                                SELECT '' FROM DUAL 
+                                </when>
+                                <when test='processType == "F"'>
+                                /*처리기준 - 가맹점 선택된 대상*/
+                                 <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                  SELECT '${item}' FROM DUAL
+                                 </foreach>
+                                </when>
+                                <otherwise>
+                                /*처리기준 - 본사/매장 선택된 대상+본사*/
+                                 <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                  SELECT '${item}' FROM DUAL
+                                 </foreach>
+                                 UNION ALL
+                                  SELECT '' FROM DUAL
+                                </otherwise>
+                             </choose>
+                            )
+    </update>
+    
+    <select id="updateTargetFranchiseCategorySelect" parameterType="kjh.common.dto.CamelMap" resultType="kjh.common.dto.CamelMap">
+    /*updateTargetFranchiseCategorySelect*/
+    SELECT
+        TF.HEAD_OFFICE_ID
+       ,TEMP.CATEGORY_ID
+       ,TEMP.VALUE
+       ,TF.FRANCHISE_ID
+       ,TF.FRANCHISE_NAME
+       ,COUNT(*) OVER(PARTITION BY CATEGORY_ID) AS ROWCOUNT
+        FROM
+            T_PRODUCT_DETAIL TPD
+           ,T_FRANCHISE      TF  LEFT OUTER JOIN
+                                                (
+                                                    SELECT 
+                                                        CP.HEAD_OFFICE_ID
+                                                       ,GROUP_CONCAT(DISTINCT C.CATEGORY_ID       ORDER BY CATEGORY_MGR_NAME)       AS CATEGORY_ID
+                                                       ,GROUP_CONCAT(DISTINCT C.CATEGORY_MGR_NAME ORDER BY CATEGORY_MGR_NAME)       AS VALUE
+                                                       ,CP.PRODUCT_ID
+                                                       ,CP.FRANCHISE_ID
+                                                    FROM T_CATEGORY C JOIN T_CATEGORY_PRODUCT CP ON  C.HEAD_OFFICE_ID  = CP.HEAD_OFFICE_ID
+                                                                                                 AND C.CATEGORY_ID     = CP.CATEGORY_ID
+                                                                                                 AND CP.FRANCHISE_ID  != ''
+                                                                                                  
+                                                    WHERE CP.DELETED_YN     = 'N'
+                                                      AND C.DELETED_YN      = 'N'
+                                                      AND CP.HEAD_OFFICE_ID = #{headOfficeId}
+                                                      AND CP.PRODUCT_ID     = #{productId}
+                                                    GROUP BY CP.PRODUCT_ID,CP.HEAD_OFFICE_ID,CP.FRANCHISE_ID
+                                                ) TEMP ON TEMP.FRANCHISE_ID = TF.FRANCHISE_ID
+    <choose>
+       <when test='chk == "sam"'>
+        WHERE IFNULL(CATEGORY_ID,'')  = IFNULL(#{categoryIdList},'')
+        </when>
+        <otherwise>
+        WHERE IFNULL(CATEGORY_ID,'') != IFNULL(#{categoryIdList},'')
+        </otherwise>
+    </choose>
+          AND TF.USE_YN         = 'Y'
+          AND TF.DELETED_YN     = 'N'
+          AND TF.HEAD_OFFICE_ID = #{headOfficeId}
+          AND TF.HEAD_OFFICE_ID = TPD.HEAD_OFFICE_ID
+          AND TF.FRANCHISE_ID   = TPD.FRANCHISE_ID
+          AND TPD.PRODUCT_ID    = #{productId}
+    </select>
+    
+    <delete id="categoryProductProcessDelete" parameterType="kjh.common.dto.CamelMap">
+    /*categoryProductProcessDelete 카테고리 상품 등록시 등록전 일괄 T_CATEGORY_PRODUCT 해당정보 삭제*/
+       DELETE FROM T_CATEGORY_PRODUCT
+       WHERE PRODUCT_ID         = #{productId}
+         AND HEAD_OFFICE_ID     = #{headOfficeId}
+         AND FRANCHISE_ID       IN (
+                                     <choose>
+                                         <when test='processType == "H"'>
+                                         /*처리기준 - 본사*/
+                                         SELECT '' FROM DUAL 
+                                         </when>
+                                         <when test='processType == "F"'>
+                                         /*처리기준 - 가맹점 선택된 대상*/
+                                          <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                           SELECT '${item}' FROM DUAL
+                                          </foreach>
+                                         </when>
+                                         <otherwise>
+                                         /*처리기준 - 본사/매장 선택된 대상+본사*/
+                                          <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                           SELECT '${item}' FROM DUAL
+                                          </foreach>
+                                          UNION ALL
+                                           SELECT '' FROM DUAL
+                                         </otherwise>
+                                      </choose>
+                                     )
+       <if test='noRoof != "Y"'>
+         AND CATEGORY_ID  NOT IN (
+                                  #선택한 대상
+                                  <foreach collection="categoryIdList" item="item" index="index" separator="UNION ALL" >
+                                     SELECT
+                                       '${item}' AS CATEGORY_ID
+                                     FROM DUAL
+                                  </foreach>
+                                 )
+       </if>
+    </delete>
+    
+    <update id="categoryProductProcessInsert" parameterType="kjh.common.dto.CamelMap">
+    /*categoryProductInsert 상품등록시 T_CATEGORY_PRODUCT 일괄등록*/
+    <!-- #처리기준# 
+         #본사 처리시 가맹점 옵션 그룹상품에 등록된 대상
+         #가맹점 처리시 해당 가맹점만 변경
+     -->INSERT INTO T_CATEGORY_PRODUCT
+        (
+             CATEGORY_PRODUCT_ID
+            ,CATEGORY_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            ,PRODUCT_DIVISION
+            ,PRODUCT_SEQ
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+        )
+        (SELECT
+             TO_UID() as CATEGORY_PRODUCT_ID
+            ,TEMP.CATEGORY_ID
+            ,TEMP.PRODUCT_ID
+            ,TEMP.HEAD_OFFICE_ID
+            ,CD.FRANCHISE_ID
+            ,TEMP.PRODUCT_DIVISION
+            ,TEMP.PRODUCT_SEQ
+            ,TEMP.DELETED_YN
+            ,TEMP.CREATED_AT
+            ,TEMP.CREATED_BY
+            ,TEMP.UPDATED_AT
+            ,TEMP.UPDATED_BY
+        FROM 
+        (<foreach collection="categoryIdList" item="item" index="index" separator="UNION ALL" >
+               SELECT
+                 '${item}'                AS CATEGORY_ID        
+                ,#{productId       }      AS PRODUCT_ID         
+                ,#{headOfficeId    }      AS HEAD_OFFICE_ID     
+                ,'1'                      AS PRODUCT_DIVISION
+                ,'0'                      AS PRODUCT_SEQ        
+                ,'N'                      AS DELETED_YN         
+                ,now()                    AS CREATED_AT         
+                ,#{createdBy       }      AS CREATED_BY         
+                ,now()                    AS UPDATED_AT         
+                ,#{updatedBy       }      AS UPDATED_BY         
+              FROM DUAL
+            </foreach>)     TEMP 
+            , T_CATEGORY_DETAIL CD
+        WHERE TEMP.CATEGORY_ID    = CD.CATEGORY_ID
+          AND TEMP.HEAD_OFFICE_ID = CD.HEAD_OFFICE_ID
+          AND CD.DELETED_YN       = 'N'
+          AND CD.FRANCHISE_ID     IN (
+                                      <choose>
+                                          <when test='processType == "H"'>
+                                          /*처리기준 - 본사*/
+                                          SELECT '' FROM DUAL 
+                                          </when>
+                                          <when test='processType == "F"'>
+                                          /*처리기준 - 가맹점 선택된 대상*/
+                                           <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                            SELECT '${item}' FROM DUAL
+                                           </foreach>
+                                          </when>
+                                          <otherwise>
+                                          /*처리기준 - 본사/매장 선택된 대상+본사*/
+                                           <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                            SELECT '${item}' FROM DUAL
+                                           </foreach>
+                                           UNION ALL
+                                            SELECT '' FROM DUAL
+                                          </otherwise>
+                                       </choose>
+                                      )
+        GROUP BY              
+                 TEMP.CATEGORY_ID
+                ,TEMP.PRODUCT_ID
+                ,TEMP.HEAD_OFFICE_ID
+                ,CD.FRANCHISE_ID
+                ,TEMP.PRODUCT_DIVISION
+                ,TEMP.PRODUCT_SEQ
+                ,TEMP.DELETED_YN
+                ,TEMP.CREATED_AT
+                ,TEMP.CREATED_BY
+                ,TEMP.UPDATED_AT
+                ,TEMP.UPDATED_BY
+      )
+      ON DUPLICATE KEY UPDATE
+         UPDATED_AT = now()
+        ,UPDATED_BY = #{updatedBy}
+    </update>
+    
+    <delete id="productOptionGroupProcessDelete" parameterType="kjh.common.dto.CamelMap">
+    /*productOptionGroupProcessDelete 상품옵션그룹정보 일괄삭제*/
+        DELETE FROM T_PRODUCT_OPTION_GROUP
+        WHERE PRODUCT_ID     = #{productId}
+          AND HEAD_OFFICE_ID = #{headOfficeId}
+          AND FRANCHISE_ID   IN (
+                                   <choose>
+                                       <when test='processType == "H"'>
+                                       /*처리기준 - 본사*/
+                                       SELECT '' FROM DUAL 
+                                       </when>
+                                       <when test='processType == "F"'>
+                                       /*처리기준 - 가맹점 선택된 대상*/
+                                        <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                         SELECT '${item}' FROM DUAL
+                                        </foreach>
+                                       </when>
+                                       <otherwise>
+                                       /*처리기준 - 본사/매장 선택된 대상+본사*/
+                                        <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                         SELECT '${item}' FROM DUAL
+                                        </foreach>
+                                        UNION ALL
+                                         SELECT '' FROM DUAL
+                                       </otherwise>
+                                    </choose>
+                                )
+    </delete>
+    
+    <update id="productOptionGroupProcessInsert" parameterType="kjh.common.dto.CamelMap">
+    /*productOptionGroupProcessInsert 카테고리 옵션그룹정보 일괄 저장*/
+       <!--  등록기준
+        A.본사 기준시    : T_OPTION_GROUP_PRODUCT에 등록된 대상의 본사로 등록된 가맹점 대상
+        B.가맹점 처리시 : 해당 가맹점
+       -->
+        INSERT INTO T_PRODUCT_OPTION_GROUP
+        (
+             PRODUCT_OPTION_GROUP_ID
+            ,OPTION_GROUP_ID
+            ,PRODUCT_ID
+            ,HEAD_OFFICE_ID
+            ,FRANCHISE_ID
+            ,OPTION_GROUP_SEQ
+            ,DELETED_YN
+            ,CREATED_AT
+            ,CREATED_BY
+            ,UPDATED_AT
+            ,UPDATED_BY
+        )
+        SELECT
+             TO_UID()
+            ,TEMP.OPTION_GROUP_ID
+            ,TEMP.PRODUCT_ID
+            ,TEMP.HEAD_OFFICE_ID
+            ,TOGD.FRANCHISE_ID
+            ,TEMP.OPTION_GROUP_SEQ
+            ,TEMP.DELETED_YN
+            ,TEMP.CREATED_AT
+            ,TEMP.CREATED_BY
+            ,TEMP.UPDATED_AT
+            ,TEMP.UPDATED_BY
+        FROM
+        (
+            <foreach collection="productOptionGroupList" item="item" separator="UNION ALL" >
+             SELECT
+                 '${item.optionGroupId}'   AS OPTION_GROUP_ID        
+                ,#{productId     }         AS PRODUCT_ID             
+                ,#{headOfficeId  }         AS HEAD_OFFICE_ID         
+                ,'${item.optionGroupSeq}'  AS OPTION_GROUP_SEQ       
+                ,'N'                       AS DELETED_YN             
+                ,now()                     AS CREATED_AT             
+                ,#{createdBy     }         AS CREATED_BY             
+                ,now()                     AS UPDATED_AT             
+                ,#{updatedBy     }         AS UPDATED_BY             
+             FROM DUAL 
+             </foreach>
+        )  TEMP 
+          ,T_OPTION_GROUP_DETAIL TOGD
+        WHERE TEMP.OPTION_GROUP_ID     = TOGD.OPTION_GROUP_ID
+          AND TEMP.HEAD_OFFICE_ID      = TOGD.HEAD_OFFICE_ID
+          AND TOGD.DELETED_YN          = 'N'
+          AND TOGD.FRANCHISE_ID        IN (
+                                           <choose>
+                                               <when test='processType == "H"'>
+                                               /*처리기준 - 본사*/
+                                               SELECT '' FROM DUAL 
+                                               </when>
+                                               <when test='processType == "F"'>
+                                               /*처리기준 - 가맹점 선택된 대상*/
+                                                <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                                 SELECT '${item}' FROM DUAL
+                                                </foreach>
+                                               </when>
+                                               <otherwise>
+                                               /*처리기준 - 본사/매장 선택된 대상+본사*/
+                                                <foreach collection="franchiseIdList" item="item" separator="UNION ALL" >
+                                                 SELECT '${item}' FROM DUAL
+                                                </foreach>
+                                                UNION ALL
+                                                 SELECT '' FROM DUAL
+                                               </otherwise>
+                                            </choose>
+                                          )
+        GROUP BY
+             TEMP.OPTION_GROUP_ID
+            ,TEMP.PRODUCT_ID
+            ,TEMP.HEAD_OFFICE_ID
+            ,TOGD.FRANCHISE_ID
+            ,TEMP.OPTION_GROUP_SEQ
+            ,TEMP.DELETED_YN
+            ,TEMP.CREATED_AT
+            ,TEMP.CREATED_BY
+            ,TEMP.UPDATED_AT
+            ,TEMP.UPDATED_BY
+        ON DUPLICATE KEY UPDATE
+         UPDATED_AT = now()
+        ,UPDATED_BY = #{updatedBy}
+    </update>
+    
+    <select id="updateTargetFranchiseOptionSelect" parameterType="kjh.common.dto.CamelMap" resultType="kjh.common.dto.CamelMap">
+    SELECT
+        TF.HEAD_OFFICE_ID
+       ,TEMP.OPTION_GROUP_ID
+       ,TEMP.VALUE
+       ,TF.FRANCHISE_ID
+       ,TF.FRANCHISE_NAME
+       ,COUNT(*) OVER(PARTITION BY OPTION_GROUP_ID ORDER BY VALUE) AS ROWCOUNT
+        FROM
+            T_PRODUCT_DETAIL TPD
+           ,T_FRANCHISE      TF LEFT OUTER JOIN
+                                               (
+                                                 SELECT 
+                                                     GROUP_CONCAT(DISTINCT O.OPTION_GROUP_ID, '/', PO.OPTION_GROUP_SEQ ORDER BY PO.OPTION_GROUP_SEQ) AS OPTION_GROUP_ID
+                                                    ,GROUP_CONCAT(DISTINCT O.OPTION_GROUP_MGR_NAME ORDER BY PO.OPTION_GROUP_SEQ)                     AS VALUE
+                                                    ,PO.PRODUCT_ID
+                                                    ,PO.FRANCHISE_ID
+                                                 FROM T_OPTION_GROUP O JOIN T_PRODUCT_OPTION_GROUP PO ON  O.HEAD_OFFICE_ID  = PO.HEAD_OFFICE_ID
+                                                                                                      AND O.OPTION_GROUP_ID = PO.OPTION_GROUP_ID
+                                                 WHERE O.DELETED_YN     = 'N'
+                                                   AND PO.DELETED_YN    = 'N'
+                                                   AND PO.PRODUCT_ID    = #{productId}
+                                                   AND O.HEAD_OFFICE_ID = #{headOfficeId}
+                                                   AND PO.FRANCHISE_ID != ''
+                                                 GROUP BY PRODUCT_ID,FRANCHISE_ID
+                                                ) TEMP ON TEMP.FRANCHISE_ID = TF.FRANCHISE_ID
+    <choose>
+       <when test='chk == "sam"'>
+        WHERE IFNULL(OPTION_GROUP_ID,'')  = IFNULL(#{productOptionGroupList},'')
+        </when>
+        <otherwise>
+        WHERE IFNULL(OPTION_GROUP_ID,'') != IFNULL(#{productOptionGroupList},'')
+        </otherwise>
+    </choose>
+          AND TF.USE_YN         = 'Y'
+          AND TF.DELETED_YN     = 'N'
+          AND TF.HEAD_OFFICE_ID = #{headOfficeId}
+          AND TF.HEAD_OFFICE_ID = TPD.HEAD_OFFICE_ID
+          AND TF.FRANCHISE_ID   = TPD.FRANCHISE_ID
+          AND TPD.PRODUCT_ID    = #{productId}
+    </select>
+</mapper>
